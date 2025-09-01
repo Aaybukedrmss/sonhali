@@ -1,0 +1,71 @@
+@using dotnet_store.Models
+@inject Microsoft.AspNetCore.Identity.SignInManager<AppUser> SignInManager
+@inject Microsoft.AspNetCore.Identity.UserManager<AppUser> UserManager
+<section class="top-bar">
+            <div class="container">
+                <div class="row gy-2 align-items-center">
+                    <div class="col-lg-2 col-sm-4 col-4">
+                        <a href="index.html" class="navbar-brand"><i class="fa-solid fa-truck-fast"></i> E-Commerce</a>
+                    </div>
+                   
+                    <div class="col-lg-5 col-sm-8 col-8 order-lg-last">
+                        <div class="d-flex justify-content-end align-items-center gap-2">
+
+                            <a href="#" class="btn btn-outline-primary">
+                                <i class="fa fa-heart"></i> <span class="ms-1 d-none d-sm-inline-block">Listem</span>
+                            </a>
+                            <a href="shopping-cart.html" class="btn btn-outline-primary ms-1">
+                                <i class="fa fa-shopping-cart"></i> <span class="ms-1 d-none d-sm-inline-block">Sepetim</span>
+                            </a>
+
+
+                            @if (SignInManager.IsSignedIn(User))
+                            {
+                                var currentUser = await UserManager.GetUserAsync(User);
+                                var displayName = string.IsNullOrWhiteSpace(currentUser?.AdSoyad) ? currentUser?.UserName : currentUser!.AdSoyad;
+                                <span class="ms-2 me-1 d-none d-sm-inline-block text-white">Merhaba, @displayName</span>
+                            }
+                            else
+                            {
+                                <a asp-controller="Account" asp-action="Login" class="btn btn-outline-primary">Giriş</a>
+                                <a asp-controller="Account" asp-action="Create" class="btn btn-primary ms-1">Kayıt Ol</a>
+                            }
+
+                            <div class="dropdown ms-2">
+                                <button class="btn btn-outline-primary d-flex align-items-center" id="menuToggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fa-solid fa-bars"></i>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li><a class="dropdown-item" asp-controller="Profile" asp-action="Index">Profil / Hesap Ayarları</a></li>
+                                    <li><a class="dropdown-item" href="../Siparislerim/Siparislerim.html">Siparişlerim</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Favorite" asp-action="Index">Favorilerim</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Help" asp-action="Index">Yardım/Şikayet/Öneri</a></li>
+                                    @if (SignInManager.IsSignedIn(User))
+                                    {
+                                        <li>
+                                            <form asp-controller="Account" asp-action="Logout" method="post" class="m-0 p-0">
+                                                @Html.AntiForgeryToken()
+                                                <button type="submit" class="dropdown-item">Çıkış Yap</button>
+                                            </form>
+                                        </li>
+                                    }
+                                    else
+                                    {
+                                        <li><a class="dropdown-item" asp-controller="Account" asp-action="Login">Giriş</a></li>
+                                        <li><a class="dropdown-item" asp-controller="Account" asp-action="Create">Kayıt Ol</a></li>
+                                    }
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-5">
+                        <form>
+                            <div class="input-group">
+                                <input type="text" placeholder="Anahtar kelime" class="form-control">
+                                <button class="btn btn-primary"><i class="fa fa-search"></i></button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>

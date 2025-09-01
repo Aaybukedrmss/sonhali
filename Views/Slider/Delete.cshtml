@@ -1,0 +1,26 @@
+@model dotnet_store.Models.SliderGetModel
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Slider Sil";
+}
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card shadow">
+            <div class="card-header">
+                <h5 class="card-title">Slider Sil</h5>
+            </div>
+            <div class="card-body text-center">
+                <img src="~/img/@Model.Resim" class="img-fluid rounded mb-3" alt="@Model.Baslik">
+                <p class="mb-3">
+                    <strong>@Model.Baslik</strong> isimli slideri silmek istiyor musunuz?
+                </p>
+                <form asp-action="Delete" method="post">
+                    <input type="hidden" asp-for="Id" />
+                    <button type="submit" class="btn btn-danger">Sil</button>
+                    <a asp-action="Index" class="btn btn-secondary">İptal</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

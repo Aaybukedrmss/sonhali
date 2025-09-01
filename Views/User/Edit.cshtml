@@ -1,0 +1,41 @@
+@model Microsoft.AspNetCore.Identity.IdentityUser
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Kullanıcı Düzenle";
+}
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card shadow">
+            <div class="card-header">
+                <h5 class="card-title">Kullanıcı Düzenle</h5>
+            </div>
+            <div class="card-body">
+                <form asp-action="Edit" method="post">
+                    <input type="hidden" asp-for="Id" />
+                    
+                    <div class="form-group mb-3">
+                        <label asp-for="UserName" class="control-label">Kullanıcı Adı</label>
+                        <input asp-for="UserName" class="form-control" />
+                        <span asp-validation-for="UserName" class="text-danger"></span>
+                    </div>
+                    
+                    <div class="form-group mb-3">
+                        <label asp-for="Email" class="control-label">E-posta</label>
+                        <input asp-for="Email" class="form-control" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+                    
+                    <div class="form-group">
+                        <a asp-action="Index" class="btn btn-secondary">Geri Dön</a>
+                        <button type="submit" class="btn btn-primary">Kaydet</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -1,0 +1,109 @@
+@{
+    ViewData["Title"] = "Yardım / Şikayet / Öneri";
+}
+
+<div class="container py-5">
+    <h3 class="mb-4">Yardım Merkezi</h3>
+
+    @if(TempData["HelpSuccess"] != null)
+    {
+        <div class="alert alert-success">@TempData["HelpSuccess"]</div>
+    }
+    @if(TempData["HelpError"] != null)
+    {
+        <div class="alert alert-danger">@TempData["HelpError"]</div>
+    }
+
+    <div class="accordion" id="helpAccordion">
+        <div class="accordionWrapper">
+            <div class="accordionItem open">
+                <h2 class="accordionItemHeading">Yardım</h2>
+                <div class="accordionItemContent">
+                    <form asp-action="Submit" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="Type" value="Yardim" />
+                        <div class="Emailaddress" style="margin-right: 8px;">
+                            <label for="helpEmail" class="form-label">E-Mail Adres</label>
+                            <input type="email" class="form-control" id="helpEmail" name="Email" placeholder="name@example.com" style="display: block; margin-bottom: 10px; margin-top:5px;">
+                        </div>
+                        <div class="Exampletextarea">
+                            <label for="helpText" class="form-label" style="display: block;">Yardım istediğiniz konu hakkında bilgi verir misiniz?</label>
+                            <textarea class="form-control" id="helpText" name="Message" rows="3"></textarea>
+                        </div>
+                        <div class="col-auto mt-3">
+                            <button type="submit" class="btn btn-custom">Gönder</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="accordionItem close">
+                <h2 class="accordionItemHeading">Şikayet</h2>
+                <div class="accordionItemContent">
+                    <form asp-action="Submit" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="Type" value="Sikayet" />
+                        <div class="Emailaddress" style="margin-right: 8px;">
+                            <label for="complaintEmail" class="form-label">E-Mail Adres</label>
+                            <input type="email" class="form-control" id="complaintEmail" name="Email" placeholder="name@example.com" style="display: block; margin-bottom: 10px; margin-top:5px;">
+                        </div>
+                        <div class="Exampletextarea">
+                            <label for="complaintText" class="form-label" style="display: block;">Şikayet konunuz hakkında bilgi verir misiniz?</label>
+                            <textarea class="form-control" id="complaintText" name="Message" rows="3"></textarea>
+                        </div>
+                        <div class="col-auto mt-3">
+                            <button type="submit" class="btn btn-custom">Gönder</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="accordionItem close">
+                <h2 class="accordionItemHeading">Öneri</h2>
+                <div class="accordionItemContent">
+                    <form asp-action="Submit" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="Type" value="Oneri" />
+                        <div class="Emailaddress" style="margin-right: 8px;">
+                            <label for="suggestionEmail" class="form-label">E- Mail Adres</label>
+                            <input type="email" class="form-control" id="suggestionEmail" name="Email" placeholder="name@example.com" style="display: block; margin-bottom: 10px; margin-top:5px;">
+                        </div>
+                        <div class="Exampletextarea">
+                            <label for="suggestionText" class="form-label" style="display: block;">Önerileriniz</label>
+                            <textarea class="form-control" id="suggestionText" name="Message" rows="3"></textarea>
+                        </div>
+                        <div class="col-auto mt-3">
+                            <button type="submit" class="btn btn-custom">Gönder</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .accordionWrapper { border-radius: .75rem; overflow: hidden; }
+    .accordionItem { background: #fff; border: 1px solid #e9ecef; }
+    .accordionItem + .accordionItem { border-top: 0; }
+    .accordionItemHeading { margin: 0; padding: 1rem 1.25rem; cursor: pointer; background: #f8f9fa; font-size: 1.05rem; }
+    .accordionItem.open .accordionItemHeading { background: #eef2ff; }
+    .accordionItemContent { display: none; padding: 1.25rem; }
+    .accordionItem.open .accordionItemContent { display: block; }
+    .btn-custom { background: var(--primary); color: #fff; }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function(){
+        document.querySelectorAll('.accordionItemHeading').forEach(function(h){
+            h.addEventListener('click', function(){
+                const item = this.parentElement;
+                const isOpen = item.classList.contains('open');
+                document.querySelectorAll('.accordionItem').forEach(i => i.classList.remove('open'));
+                if(!isOpen){ item.classList.add('open'); }
+            });
+        });
+    });
+</script>
+
+

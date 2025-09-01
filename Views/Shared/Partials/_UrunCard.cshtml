@@ -1,0 +1,169 @@
+@model dotnet_store.Models.Urun
+@using Microsoft.EntityFrameworkCore
+@inject dotnet_store.Models.DataContext DataContext
+@inject Microsoft.AspNetCore.Identity.SignInManager<dotnet_store.Models.AppUser> SignInManager
+@inject Microsoft.AspNetCore.Identity.UserManager<dotnet_store.Models.AppUser> UserManager
+
+<div class="card h-100 border-0 shadow-sm product-card">
+    <div class="position-relative">
+        <!-- Ürün Görseli -->
+        <div class="product-image-container" style="height: 200px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
+            <div class="d-flex align-items-center justify-content-center h-100">
+                <i class="fas fa-book fa-3x text-muted"></i>
+            </div>
+        </div>
+        
+        <!-- Badge'ler -->
+        <div class="position-absolute top-0 start-0 p-2">
+            @if (Model.Aktif == 1)
+            {
+                <span class="badge bg-success">Aktif</span>
+            }
+            else
+            {
+                <span class="badge bg-secondary">Pasif</span>
+            }
+        </div>
+        
+        <!-- Favori Butonu -->
+        <div class="position-absolute top-0 end-0 p-2">
+            @{ 
+                var isFav = false; 
+                if (SignInManager.IsSignedIn(User))
+                {
+                    var cu = await UserManager.GetUserAsync(User);
+                    if (cu != null)
+                    {
+                        isFav = DataContext.Favorites.Any(f => f.UserId == cu.Id && f.UrunId == Model.Id);
+                    }
+                }
+            }
+            <form asp-controller="Favorite" asp-action="Toggle" method="post" class="d-inline">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="urunId" value="@Model.Id" />
+                <button type="submit" class="btn btn-light btn-sm rounded-circle shadow-sm" title="Favorilere ekle/çıkar">
+                    @if (isFav)
+                    {
+                        <i class="fas fa-heart text-danger"></i>
+                    }
+                    else
+                    {
+                        <i class="far fa-heart text-muted"></i>
+                    }
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div class="card-body d-flex flex-column">
+        <!-- Ürün Bilgileri -->
+        <div class="mb-2">
+            <h6 class="card-title fw-bold text-dark mb-1">
+                <a href="@Url.Action("Details", "Urun", new { id = Model.Id })" class="text-decoration-none text-dark">
+                    @Model.ProductName
+                </a>
+            </h6>
+            <p class="text-muted small mb-1">@Model.Yazar</p>
+            <p class="text-muted small mb-2">@Model.Yayinevi</p>
+        </div>
+
+        <!-- Kategori ve Marka -->
+        <div class="mb-3">
+            <span class="badge bg-primary me-1">@Model.Marka</span>
+            <span class="badge bg-info">@Model.MedyaTipi</span>
+        </div>
+
+        <!-- Fiyat ve Stok -->
+        <div class="mt-auto">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <h5 class="text-success fw-bold mb-0">@Model.Fiyat.ToString("C")</h5>
+                <small class="text-muted">
+                    <i class="fas fa-box me-1"></i>
+                    @Model.StockQuantity adet
+                </small>
+            </div>
+            
+            <!-- Değerlendirme -->
+            @if (Model.TotalRating > 0)
+            {
+                <div class="mb-3">
+                    <div class="d-flex align-items-center">
+                        <div class="stars me-2">
+                            @for (int i = 1; i <= 5; i++)
+                            {
+                                if (i <= Model.TotalRating)
+                                {
+                                    <i class="fas fa-star text-warning" style="font-size: 0.8rem;"></i>
+                                }
+                                else
+                                {
+                                    <i class="far fa-star text-warning" style="font-size: 0.8rem;"></i>
+                                }
+                            }
+                        </div>
+                        <small class="text-muted">(@Model.TotalRating.ToString("F1"))</small>
+                    </div>
+                </div>
+            }
+
+            <!-- Aksiyon Butonları -->
+            <div class="d-grid gap-2">
+                <a href="@Url.Action("Details", "Urun", new { id = Model.Id })" class="btn btn-outline-primary btn-sm">
+                    <i class="fas fa-eye me-1"></i>
+                    Detayları Gör
+                </a>
+                @if (Model.StockQuantity > 0)
+                {
+                    <button class="btn btn-primary btn-sm">
+                        <i class="fas fa-shopping-cart me-1"></i>
+                        Sepete Ekle
+                    </button>
+                }
+                else
+                {
+                    <button class="btn btn-secondary btn-sm" disabled>
+                        <i class="fas fa-times me-1"></i>
+                        Stokta Yok
+                    </button>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .product-card {
+        transition: all 0.3s ease;
+        border-radius: 12px;
+        overflow: hidden;
+    }
+    
+    .product-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1) !important;
+    }
+    
+    .product-image-container {
+        border-radius: 12px 12px 0 0;
+    }
+    
+    .card-title a:hover {
+        color: #007bff !important;
+    }
+    
+    .btn {
+        transition: all 0.2s ease;
+    }
+    
+    .btn:hover {
+        transform: translateY(-1px);
+    }
+    
+    .stars {
+        line-height: 1;
+    }
+    
+    .badge {
+        font-size: 0.75rem;
+    }
+</style>

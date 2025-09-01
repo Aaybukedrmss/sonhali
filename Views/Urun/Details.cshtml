@@ -1,0 +1,564 @@
+@model dotnet_store.Models.Urun
+@inject dotnet_store.Models.DataContext DataContext
+@inject Microsoft.AspNetCore.Identity.SignInManager<dotnet_store.Models.AppUser> SignInManager
+@inject Microsoft.AspNetCore.Identity.UserManager<dotnet_store.Models.AppUser> UserManager
+
+@{
+    ViewData["Title"] = Model.ProductName;
+}
+
+
+@section Bar{
+    @await Html.PartialAsync("Partials/_Navbar")
+}
+<div class="container-fluid py-5">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="@Url.Action("Index", "Home")" class="text-decoration-none"><i class="fas fa-home"></i> Ana Sayfa</a></li>
+            <li class="breadcrumb-item"><a href="@Url.Action("Index")" class="text-decoration-none">Ürünler</a></li>
+            <li class="breadcrumb-item"><a href="@Url.Action("List")" class="text-decoration-none">@Model.TopMostCategoryNames</a></li>
+            <li class="breadcrumb-item active" aria-current="page">@Model.ProductName</li>
+        </ol>
+    </nav>
+
+    <div class="row">
+        <!-- Ürün Görseli ve Galeri -->
+        <div class="col-lg-6 mb-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-0">
+                    <div class="product-gallery">
+                        <!-- Ana ürün görseli için placeholder -->
+                        <div class="main-image-container text-center p-4" style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
+                            <div class="product-image-placeholder d-flex align-items-center justify-content-center" style="height: 400px;">
+                                <div class="text-center">
+                                    <i class="fas fa-book fa-4x text-muted mb-3"></i>
+                                    <p class="text-muted">Ürün Görseli</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Küçük görseller -->
+                        <div class="thumbnail-images d-flex justify-content-center gap-2 p-3 border-top">
+                            <div class="thumbnail-item active" style="width: 80px; height: 80px; background: #f8f9fa; border: 2px solid #007bff; border-radius: 8px; cursor: pointer;"></div>
+                            <div class="thumbnail-item" style="width: 80px; height: 80px; background: #f8f9fa; border: 2px solid #dee2e6; border-radius: 8px; cursor: pointer;"></div>
+                            <div class="thumbnail-item" style="width: 80px; height: 80px; background: #f8f9fa; border: 2px solid #dee2e6; border-radius: 8px; cursor: pointer;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ürün Bilgileri -->
+        <div class="col-lg-6">
+            <div class="product-info">
+                <!-- Ürün Başlığı ve Badge'ler -->
+                <h1 class="h2 mb-3 fw-bold text-dark">@Model.ProductName</h1>
+                
+                <div class="mb-3">
+                    <span class="badge bg-primary me-2 px-3 py-2">@Model.Marka</span>
+                    <span class="badge bg-info me-2 px-3 py-2">@Model.MedyaTipi</span>
+                    @if (Model.Aktif == 0)
+                    {
+                        <span class="badge bg-success px-3 py-2"><i class="fas fa-check-circle me-1"></i>Aktif</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-danger px-3 py-2"><i class="fas fa-times-circle me-1"></i>Pasif</span>
+                    }
+                </div>
+
+                <!-- Fiyat ve Stok Durumu -->
+                <div class="price-section mb-4">
+                    <div class="d-flex align-items-center mb-2">
+                        <h2 class="h1 text-success fw-bold mb-0 me-3">@Model.Fiyat.ToString("C")</h2>
+                        @if (Model.TotalRating > 0)
+                        {
+                            <div class="rating d-flex align-items-center">
+                                <div class="stars me-2">
+                                    @for (int i = 1; i <= 5; i++)
+                                    {
+                                        if (i <= Model.TotalRating)
+                                        {
+                                            <i class="fas fa-star text-warning"></i>
+                                        }
+                                        else
+                                        {
+                                            <i class="far fa-star text-warning"></i>
+                                        }
+                                    }
+                                </div>
+                                <span class="text-muted">(@Model.TotalRating.ToString("F1"))</span>
+                            </div>
+                        }
+                    </div>
+                    
+                    <div class="stock-status mb-3">
+                        @if (Model.StockQuantity > 0)
+                        {
+                            <p class="text-success mb-0">
+                                <i class="fas fa-check-circle me-2"></i>
+                                <strong>Stokta mevcut</strong> - @Model.StockQuantity adet
+                            </p>
+                        }
+                        else
+                        {
+                            <p class="text-danger mb-0">
+                                <i class="fas fa-times-circle me-2"></i>
+                                <strong>Stokta yok</strong>
+                            </p>
+                        }
+                    </div>
+                </div>
+
+                <!-- Satın Alma Butonları -->
+                <div class="purchase-actions mb-4">
+                    @if (Model.StockQuantity > 0)
+                    {
+                        <div class="d-grid gap-2">
+                            <button class="btn btn-primary btn-lg py-3">
+                                <i class="fas fa-shopping-cart me-2"></i>
+                                Sepete Ekle
+                            </button>
+                            <button class="btn btn-outline-primary py-2">
+                                <i class="fas fa-bolt me-2"></i>
+                                Hemen Al
+                            </button>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="d-grid gap-2">
+                            <button class="btn btn-secondary btn-lg py-3" disabled>
+                                <i class="fas fa-times-circle me-2"></i>
+                                Stokta Yok
+                            </button>
+                            <button class="btn btn-outline-secondary py-2">
+                                <i class="fas fa-bell me-2"></i>
+                                Stok Bildirimi Al
+                            </button>
+                        </div>
+                    }
+                    
+                    <div class="d-flex gap-2 mt-3">
+                        @{ 
+                            var isFavMain = false; 
+                            if (SignInManager.IsSignedIn(User))
+                            {
+                                var cu = await UserManager.GetUserAsync(User);
+                                if (cu != null)
+                                {
+                                    isFavMain = DataContext.Favorites.Any(f => f.UserId == cu.Id && f.UrunId == Model.Id);
+                                }
+                            }
+                        }
+                        <form asp-controller="Favorite" asp-action="Toggle" method="post" class="flex-fill">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="urunId" value="@Model.Id" />
+                            <button type="submit" class="btn btn-outline-danger w-100">
+                                @if (isFavMain)
+                                {
+                                    <i class="fas fa-heart me-2 text-danger"></i><span>Favorilerde</span>
+                                }
+                                else
+                                {
+                                    <i class="far fa-heart me-2"></i><span>Favorilere Ekle</span>
+                                }
+                            </button>
+                        </form>
+                        <button class="btn btn-outline-info flex-fill">
+                            <i class="fas fa-share-alt me-2"></i>
+                            Paylaş
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Hızlı Bilgiler -->
+                <div class="quick-info mb-4">
+                    <div class="row g-3">
+                        <div class="col-6">
+                            <div class="info-item p-3 bg-light rounded">
+                                <small class="text-muted d-block">Yazar</small>
+                                <strong>@Model.Yazar</strong>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="info-item p-3 bg-light rounded">
+                                <small class="text-muted d-block">Yayınevi</small>
+                                <strong>@Model.Yayinevi</strong>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="info-item p-3 bg-light rounded">
+                                <small class="text-muted d-block">ISBN</small>
+                                <strong>@Model.Isbn</strong>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="info-item p-3 bg-light rounded">
+                                <small class="text-muted d-block">Hazırlık Süresi</small>
+                                <strong>@Model.LeadTimeHour saat</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Detaylı Bilgiler -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white border-0">
+                    <ul class="nav nav-tabs card-header-tabs" id="productTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="description-tab" data-bs-toggle="tab" data-bs-target="#description" type="button" role="tab">
+                                <i class="fas fa-info-circle me-2"></i>Açıklama
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="specifications-tab" data-bs-toggle="tab" data-bs-target="#specifications" type="button" role="tab">
+                                <i class="fas fa-list me-2"></i>Özellikler
+                            </button>
+                        </li>
+                        @if (!string.IsNullOrEmpty(Model.Degerlendirmelerim))
+                        {
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="reviews-tab" data-bs-toggle="tab" data-bs-target="#reviews" type="button" role="tab">
+                                    <i class="fas fa-star me-2"></i>Değerlendirmeler
+                                </button>
+                            </li>
+                        }
+                    </ul>
+                </div>
+                <div class="card-body">
+                    <div class="tab-content" id="productTabsContent">
+                        <!-- Açıklama Tab -->
+                        <div class="tab-pane fade show active" id="description" role="tabpanel">
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <h5 class="mb-3">Ürün Açıklaması</h5>
+                                    <p class="text-muted">@Model.FullDescription</p>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="card bg-light">
+                                        <div class="card-body">
+                                            <h6 class="card-title">Hızlı Bilgiler</h6>
+                                            <ul class="list-unstyled mb-0">
+                                                <li class="mb-2"><i class="fas fa-tag me-2 text-primary"></i>SKU: @Model.Sku</li>
+                                                <li class="mb-2"><i class="fas fa-layer-group me-2 text-primary"></i>Kategori: @Model.TopMostCategoryNames</li>
+                                                <li class="mb-2"><i class="fas fa-box me-2 text-primary"></i>Stok: @Model.StockQuantity adet</li>
+                                                <li><i class="fas fa-clock me-2 text-primary"></i>Hazırlık: @Model.LeadTimeHour saat</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Özellikler Tab -->
+                        <div class="tab-pane fade" id="specifications" role="tabpanel">
+                            <h5 class="mb-3">Teknik Özellikler</h5>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <table class="table table-borderless">
+                                        <tbody>
+                                            <tr>
+                                                <td class="fw-bold text-muted">Ürün Adı:</td>
+                                                <td>@Model.ProductName</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="fw-bold text-muted">Yazar:</td>
+                                                <td>@Model.Yazar</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="fw-bold text-muted">Yayınevi:</td>
+                                                <td>@Model.Yayinevi</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="fw-bold text-muted">Marka:</td>
+                                                <td>@Model.Marka</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="col-md-6">
+                                    <table class="table table-borderless">
+                                        <tbody>
+                                            <tr>
+                                                <td class="fw-bold text-muted">ISBN:</td>
+                                                <td>@Model.Isbn</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="fw-bold text-muted">SKU:</td>
+                                                <td>@Model.Sku</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="fw-bold text-muted">Medya Tipi:</td>
+                                                <td>@Model.MedyaTipi</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="fw-bold text-muted">Kategori:</td>
+                                                <td>@Model.TopMostCategoryNames</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Değerlendirmeler Tab -->
+                        @if (!string.IsNullOrEmpty(Model.Degerlendirmelerim))
+                        {
+                            <div class="tab-pane fade" id="reviews" role="tabpanel">
+                                <h5 class="mb-3">Müşteri Değerlendirmeleri</h5>
+                                <div class="review-item p-4 bg-light rounded">
+                                    <div class="d-flex justify-content-between align-items-start mb-3">
+                                        <div>
+                                            <h6 class="mb-1">Müşteri Değerlendirmesi</h6>
+                                            @if (Model.TotalRating > 0)
+                                            {
+                                                <div class="stars">
+                                                    @for (int i = 1; i <= 5; i++)
+                                                    {
+                                                        if (i <= Model.TotalRating)
+                                                        {
+                                                            <i class="fas fa-star text-warning"></i>
+                                                        }
+                                                        else
+                                                        {
+                                                            <i class="far fa-star text-warning"></i>
+                                                        }
+                                                    }
+                                                    <span class="ms-2 text-muted">(@Model.TotalRating.ToString("F1"))</span>
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                    <p class="mb-0">@Model.Degerlendirmelerim</p>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Benzer Ürünler -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <h4 class="mb-4">
+                <i class="fas fa-thumbs-up me-2 text-primary"></i>
+                Benzer Ürünler
+            </h4>
+            @if (ViewBag.BenzerUrunler != null && ((List<dotnet_store.Models.Urun>)ViewBag.BenzerUrunler).Any())
+            {
+                <div class="row">
+                    @foreach (var benzerUrun in (List<dotnet_store.Models.Urun>)ViewBag.BenzerUrunler)
+                    {
+                        <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 mb-4">
+                            <div class="card h-100 border-0 shadow-sm product-card">
+                                <div class="position-relative">
+                                    <!-- Ürün Görseli -->
+                                    <div class="product-image-container" style="height: 200px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
+                                        <div class="d-flex align-items-center justify-content-center h-100">
+                                            <i class="fas fa-book fa-3x text-muted"></i>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Badge'ler -->
+                                    <div class="position-absolute top-0 start-0 p-2">
+                                        @if (benzerUrun.Aktif == 1)
+                                        {
+                                            <span class="badge bg-success">Aktif</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary">Pasif</span>
+                                        }
+                                    </div>
+                                    
+                                    <!-- Favori Butonu -->
+                                    <div class="position-absolute top-0 end-0 p-2">
+                                        @{ 
+                                            var isFavSimilar = false; 
+                                            if (SignInManager.IsSignedIn(User))
+                                            {
+                                                var cu = await UserManager.GetUserAsync(User);
+                                                if (cu != null)
+                                                {
+                                                    isFavSimilar = DataContext.Favorites.Any(f => f.UserId == cu.Id && f.UrunId == benzerUrun.Id);
+                                                }
+                                            }
+                                        }
+                                        <button type="button" class="btn btn-light btn-sm rounded-circle shadow-sm btn-fav-toggle @(isFavSimilar ? "favorite-active" : "")" data-urun-id="@benzerUrun.Id" title="Favorilere ekle/çıkar">
+                                            @if (isFavSimilar)
+                                            {
+                                                <i class="fas fa-heart text-danger"></i>
+                                            }
+        							else
+                                            {
+                                                <i class="far fa-heart text-muted"></i>
+                                            }
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="card-body d-flex flex-column">
+                                    <!-- Ürün Bilgileri -->
+                                    <div class="mb-2">
+                                        <h6 class="card-title fw-bold text-dark mb-1">
+                                            <a href="@Url.Action("Details", new { id = benzerUrun.Id })" class="text-decoration-none text-dark">
+                                                @benzerUrun.ProductName
+                                            </a>
+                                        </h6>
+                                        <p class="text-muted small mb-1">@benzerUrun.Yazar</p>
+                                        <p class="text-muted small mb-2">@benzerUrun.Yayinevi</p>
+                                    </div>
+
+                                    <!-- Kategori ve Marka -->
+                                    <div class="mb-3">
+                                        <span class="badge bg-primary me-1">@benzerUrun.Marka</span>
+                                        <span class="badge bg-info">@benzerUrun.MedyaTipi</span>
+                                    </div>
+
+                                    <!-- Fiyat ve Stok -->
+                                    <div class="mt-auto">
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <h5 class="text-success fw-bold mb-0">@benzerUrun.Fiyat.ToString("C")</h5>
+                                            <small class="text-muted">
+                                                <i class="fas fa-box me-1"></i>
+                                                @benzerUrun.StockQuantity adet
+                                            </small>
+                                        </div>
+                                        
+                                        <!-- Değerlendirme -->
+                                        @if (benzerUrun.TotalRating > 0)
+                                        {
+                                            <div class="mb-3">
+                                                <div class="d-flex align-items-center">
+                                                    <div class="stars me-2">
+                                                        @for (int i = 1; i <= 5; i++)
+                                                        {
+                                                            if (i <= benzerUrun.TotalRating)
+                                                            {
+                                                                <i class="fas fa-star text-warning" style="font-size: 0.8rem;"></i>
+                                                            }
+                                                            else
+                                                            {
+                                                                <i class="far fa-star text-warning" style="font-size: 0.8rem;"></i>
+                                                            }
+                                                        }
+                                                    </div>
+                                                    <small class="text-muted">(@benzerUrun.TotalRating.ToString("F1"))</small>
+                                                </div>
+                                            </div>
+                                        }
+
+                                        <!-- Aksiyon Butonları -->
+                                        <div class="d-grid gap-2">
+                                            <a href="@Url.Action("Details", new { id = benzerUrun.Id })" class="btn btn-outline-primary btn-sm">
+                                                <i class="fas fa-eye me-1"></i>
+                                                Detayları Gör
+                                            </a>
+                                            @if (benzerUrun.StockQuantity > 0)
+                                            {
+                                                <button class="btn btn-primary btn-sm">
+                                                    <i class="fas fa-shopping-cart me-1"></i>
+                                                    Sepete Ekle
+                                                </button>
+                                            }
+                                            else
+                                            {
+                                                <button class="btn btn-secondary btn-sm" disabled>
+                                                    <i class="fas fa-times me-1"></i>
+                                                    Stokta Yok
+                                                </button>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="text-center py-4">
+                    <i class="fas fa-box-open fa-3x text-muted mb-3"></i>
+                    <h5 class="text-muted">Benzer ürün bulunamadı</h5>
+                    <p class="text-muted">Şu anda başka ürün bulunmuyor.</p>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<style>
+    .product-gallery .main-image-container {
+        border-radius: 12px 12px 0 0;
+    }
+    
+    .thumbnail-item:hover {
+        border-color: #007bff !important;
+        transform: scale(1.05);
+        transition: all 0.2s ease;
+    }
+    
+    .info-item {
+        transition: all 0.2s ease;
+    }
+    
+    .info-item:hover {
+        background-color: #e9ecef !important;
+        transform: translateY(-2px);
+    }
+    
+    .nav-tabs .nav-link {
+        border: none;
+        color: #6c757d;
+        font-weight: 500;
+    }
+    
+    .nav-tabs .nav-link.active {
+        color: #007bff;
+        background: none;
+        border-bottom: 3px solid #007bff;
+    }
+    
+    .card {
+        transition: all 0.3s ease;
+    }
+    
+    .card:hover {
+        transform: translateY(-5px);
+    }
+    
+    .btn {
+        transition: all 0.2s ease;
+    }
+    
+    .btn:hover {
+        transform: translateY(-1px);
+    }
+</style>
+
+<script>
+    // Thumbnail tıklama işlevi
+    document.querySelectorAll('.thumbnail-item').forEach(item => {
+        item.addEventListener('click', function() {
+            // Aktif thumbnail'ı güncelle
+            document.querySelectorAll('.thumbnail-item').forEach(t => {
+                t.classList.remove('active');
+                t.style.borderColor = '#dee2e6';
+            });
+            this.classList.add('active');
+            this.style.borderColor = '#007bff';
+        });
+    });
+</script>
+
+

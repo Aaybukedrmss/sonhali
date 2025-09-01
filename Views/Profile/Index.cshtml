@@ -1,0 +1,344 @@
+@{
+    ViewData["Title"] = "Profilim";
+}
+
+<div class="profile-page"><div class="profile-container" style="padding:0 0 0 0;">
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h2>Merhaba,</h2>
+            <h3 id="userFullName">@ViewBag.FullName</h3>
+        </div>
+        <ul class="sidebar-menu">
+            <li class="active"><a asp-controller="Profile" asp-action="Index"><i class="fas fa-user"></i>Üyelik Bilgilerim</a></li>
+            <li><a asp-controller="Favorite" asp-action="Index"><i class="fas fa-list"></i>Favorilerim</a></li>
+            <li>
+                <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
+                    @Html.AntiForgeryToken()
+                    <button class="link-as-button"><i class="fas fa-sign-out-alt"></i>Çıkış Yap</button>
+                </form>
+            </li>
+        </ul>
+    </div>
+
+    <div class="main-content">
+        <h1>Üyelik Bilgilerim</h1>
+        <div class="tab-container">
+            <div class="tabs">
+                <div class="tab active" data-tab="personal-info">Kişisel Bilgilerim</div>
+                <div class="tab" data-tab="password-change">Şifre Değişikliği</div>
+                <div class="tab" data-tab="addresses">Adreslerim</div>
+            </div>
+
+            <div class="tab-content active" id="personal-info">
+                @if(TempData["ProfileSuccess"] != null){<div class="alert alert-success">@TempData["ProfileSuccess"]</div>}
+                @if(TempData["ProfileError"] != null){<div class="alert alert-danger">@TempData["ProfileError"]</div>}
+                <form id="personalInfoForm" asp-action="Update" method="post">
+                    @Html.AntiForgeryToken()
+                    <div class="form-group">
+                        <label for="firstName">Adınız</label>
+                        <input type="text" id="firstName" name="FirstName" value="">
+                    </div>
+                    <div class="form-group">
+                        <label for="lastName">Soyadınız</label>
+                        <input type="text" id="lastName" name="LastName" value="">
+                    </div>
+                    <div class="form-group">
+                        <label for="username">Kullanıcı Adı</label>
+                        <input type="text" id="username" name="Username" value="">
+                    </div>
+                    <div class="form-group">
+                        <label for="email">E-posta Adresi</label>
+                        <input type="email" id="email" name="Email" value="">
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Telefon Numarası</label>
+                        <input type="tel" id="phone" name="Phone" placeholder="Telefon numaranızı girin">
+                    </div>
+                    <div class="checkbox-group">
+                        <input class="marketingPermission" type="checkbox" id="marketingPermission" name="marketingPermission" checked>
+                        <label for="marketingPermission">Shop.co Mağazacılık Pazarlama A.Ş tarafıma ticari elektronik ileti göndermesi için burada belirtilenlere iznim vardır.</label>
+                    </div>
+                    <button type="submit" class="bilgibutton">Bilgilerimi Güncelle</button>
+                    <div class="success-message" id="personalInfoSuccess">Bilgileriniz başarıyla güncellendi!</div>
+                    <div class="error-message" id="personalInfoError"></div>
+                </form>
+            </div>
+
+            <div class="tab-content" id="password-change">
+                <form id="passwordChangeForm">
+                    <div class="form-group">
+                        <label for="currentPassword">Mevcut Şifre</label>
+                        <input type="password" id="currentPassword" name="currentPassword">
+                    </div>
+                    <div class="form-group">
+                        <label for="newPassword">Yeni Şifre</label>
+                        <input type="password" id="newPassword" name="newPassword">
+                    </div>
+                    <div class="form-group">
+                        <label for="confirmPassword">Yeni Şifre Tekrar</label>
+                        <input type="password" id="confirmPassword" name="confirmPassword">
+                    </div>
+                    <button type="submit" class="bilgibutton">Şifremi Değiştir</button>
+                    <div class="success-message" id="passwordChangeSuccess">Şifreniz başarıyla değiştirildi!</div>
+                    <div class="error-message" id="passwordChangeError"></div>
+                </form>
+            </div>
+
+            <div class="tab-content" id="addresses">
+                <button class="bilgibutton" id="addAddressBtn" type="button">Yeni Adres Ekle</button>
+                <div class="address-list" id="addressList"></div>
+            </div>
+        </div>
+    </div>
+    </div>
+</div>
+
+<!-- Adres Ekleme/Düzenleme Modalı -->
+<div class="modal" id="addressModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 id="addressModalTitle">Yeni Adres Ekle</h3>
+            <button class="close-btn" id="closeAddressModal" type="button">&times;</button>
+        </div>
+        <form id="addressForm">
+            <input type="hidden" id="addressId">
+            <div class="form-group">
+                <label for="addressTitle">Adres Başlığı</label>
+                <input type="text" id="addressTitle" name="addressTitle" required>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="addressFirstName">Ad</label>
+                    <input type="text" id="addressFirstName" name="addressFirstName" required>
+                </div>
+                <div class="form-group">
+                    <label for="addressLastName">Soyad</label>
+                    <input type="text" id="addressLastName" name="addressLastName" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="addressPhone">Telefon</label>
+                <input type="tel" id="addressPhone" name="addressPhone" required>
+            </div>
+            <div class="form-group">
+                <label for="addressCity">İl</label>
+                <select id="addressCity" name="addressCity" required>
+                    <option value="">Seçiniz</option>
+                    <option value="istanbul">İstanbul</option>
+                    <option value="ankara">Ankara</option>
+                    <option value="izmir">İzmir</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="addressDistrict">İlçe</label>
+                <select id="addressDistrict" name="addressDistrict" required>
+                    <option value="">Önce il seçiniz</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="addressNeighborhood">Mahalle</label>
+                <input type="text" id="addressNeighborhood" name="addressNeighborhood" required>
+            </div>
+            <div class="form-group">
+                <label for="addressDetails">Adres Detayı</label>
+                <textarea id="addressDetails" name="addressDetails" rows="3" required></textarea>
+            </div>
+            <div class="checkbox-group">
+                <input type="checkbox" id="defaultAddress" name="defaultAddress">
+                <label for="defaultAddress">Varsayılan adresim olarak ayarla</label>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="cancelAddress">İptal</button>
+                <button type="submit" class="btn">Kaydet</button>
+            </div>
+            <div class="success-message" id="addressSuccess"></div>
+            <div class="error-message" id="addressError"></div>
+        </form>
+    </div>
+</div>
+
+<style>
+    .profile-container{display:flex;gap:1rem}
+    .profile-page .sidebar{width:270px;background:#fff;border:1px solid #e9ecef;border-radius:.75rem;height:100%}
+    .profile-page .sidebar-header{padding:1.25rem;border-bottom:1px solid #e9ecef}
+    .profile-page .sidebar-menu{list-style:none;margin:0;padding:0}
+    .profile-page .sidebar-menu li{border-bottom:1px solid #f1f3f5}
+    .profile-page .sidebar-menu a,.profile-page .link-as-button{display:block;width:100%;text-align:left;padding:.875rem 1.25rem;text-decoration:none;color:#343a40;background:transparent;border:0}
+    .profile-page .sidebar-menu li.active a{background:#f8f9fa;font-weight:600}
+    .profile-page .link-as-button{cursor:pointer}
+    .profile-page .main-content{flex:1;background:#fff;border:1px solid #e9ecef;border-radius:.75rem;padding:1.25rem}
+    .profile-page .tabs{display:flex;gap:.5rem;margin-bottom:1rem}
+    .profile-page .tab{padding:.5rem .75rem;border:1px solid #e9ecef;border-radius:.5rem;cursor:pointer}
+    .profile-page .tab.active{background:#eef2ff;border-color:#dbe4ff}
+    .profile-page .tab-content{display:none}
+    .profile-page .tab-content.active{display:block}
+    .profile-page .form-group{display:flex;flex-direction:column;margin-bottom:.75rem}
+    .profile-page .checkbox-group{display:flex;gap:.5rem;align-items:flex-start;margin:.75rem 0}
+    .profile-page .bilgibutton{background:var(--primary);color:#fff;border:0;border-radius:.5rem;padding:.5rem 1rem}
+    .profile-page .success-message,.profile-page .error-message{display:none;margin-top:.5rem}
+
+    .profile-page .modal{display:none;position:fixed;inset:0;align-items:center;justify-content:center;background:rgba(0,0,0,.4);z-index:1060}
+    .profile-page .modal-content{background:#fff;border-radius:.75rem;width:600px;max-width:95%;box-shadow:0 10px 20px rgba(0,0,0,.15)}
+    .profile-page .modal-header{display:flex;align-items:center;justify-content:space-between;padding:1rem 1.25rem;border-bottom:1px solid #e9ecef}
+    .profile-page .close-btn{border:0;background:transparent;font-size:1.5rem;line-height:1}
+    .profile-page .form-row{display:flex;gap:.75rem}
+    .profile-page .address-list .address-item{border:1px solid #f1f3f5;border-radius:.5rem;padding:.75rem;margin:.5rem 0}
+    .profile-page .address-actions{display:flex;gap:.5rem}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const tabs = document.querySelectorAll('.tab');
+    tabs.forEach(tab => {
+        tab.addEventListener('click', function() {
+            document.querySelector('.tab.active').classList.remove('active');
+            document.querySelector('.tab-content.active').classList.remove('active');
+            this.classList.add('active');
+            const tabId = this.getAttribute('data-tab');
+            document.getElementById(tabId).classList.add('active');
+        });
+    });
+
+    const cityDistricts = {
+        'istanbul': ['Kadıköy','Beşiktaş','Şişli','Beyoğlu','Üsküdar','Fatih','Bakırköy','Bağcılar'],
+        'ankara': ['Çankaya','Keçiören','Yenimahalle','Altındağ','Mamak','Etimesgut','Sincan'],
+        'izmir': ['Konak','Karşıyaka','Bornova','Buca','Bayraklı','Çiğli','Gaziemir']
+    };
+
+    document.getElementById('addressCity').addEventListener('change', function(){
+        const city = this.value;
+        const districtSelect = document.getElementById('addressDistrict');
+        districtSelect.innerHTML = '<option value="">Seçiniz</option>';
+        if (city && cityDistricts[city]) {
+            cityDistricts[city].forEach(d => {
+                const option = document.createElement('option');
+                option.value = d; option.textContent = d; districtSelect.appendChild(option);
+            });
+        }
+    });
+
+    function openModal(id){ document.getElementById(id).style.display='flex'; }
+    function closeModal(id){ document.getElementById(id).style.display='none'; }
+
+    document.getElementById('addAddressBtn').addEventListener('click', function(){
+        document.getElementById('addressModalTitle').textContent='Yeni Adres Ekle';
+        document.getElementById('addressForm').reset();
+        document.getElementById('addressId').value='';
+        openModal('addressModal');
+    });
+    document.getElementById('closeAddressModal').addEventListener('click', function(){ closeModal('addressModal'); });
+    document.getElementById('cancelAddress').addEventListener('click', function(){ closeModal('addressModal'); });
+
+    function loadUserData(){
+        const userData = JSON.parse(localStorage.getItem('userData')) || {firstName:'', lastName:'', email:'', phone:'', marketingPermission:true};
+        document.getElementById('firstName').value = userData.firstName;
+        document.getElementById('lastName').value = userData.lastName;
+        document.getElementById('username').value = '@User?.Identity?.Name';
+        document.getElementById('email').value = userData.email;
+        document.getElementById('phone').value = userData.phone;
+        document.getElementById('marketingPermission').checked = userData.marketingPermission;
+        document.getElementById('userFullName').textContent = `${userData.firstName || '@ViewBag.FullName'} ${userData.lastName || ''}`.trim();
+
+        const addresses = JSON.parse(localStorage.getItem('addresses')) || [];
+        renderAddresses(addresses);
+    }
+
+    function renderAddresses(addresses){
+        const addressList = document.getElementById('addressList');
+        addressList.innerHTML='';
+        if(addresses.length===0){ addressList.innerHTML='<p>Kayıtlı adres bulunmamaktadır.</p>'; return; }
+        addresses.forEach((address, index)=>{
+            const el = document.createElement('div');
+            el.className='address-item';
+            el.innerHTML = `
+                <h4>${address.title} ${address.isDefault ? '(Varsayılan)' : ''}</h4>
+                <p>${address.firstName} ${address.lastName}</p>
+                <p>${address.phone}</p>
+                <p>${address.city}, ${address.district}, ${address.neighborhood}</p>
+                <p>${address.details}</p>
+                <div class="address-actions">
+                    <button class="btn btn-secondary edit-address" data-id="${index}">Düzenle</button>
+                    <button class="btn btn-danger delete-address" data-id="${index}">Sil</button>
+                </div>`;
+            addressList.appendChild(el);
+        });
+        document.querySelectorAll('.edit-address').forEach(btn=>btn.addEventListener('click',function(){editAddress(this.getAttribute('data-id'));}));
+        document.querySelectorAll('.delete-address').forEach(btn=>btn.addEventListener('click',function(){deleteAddress(this.getAttribute('data-id'));}));
+    }
+
+    function editAddress(id){
+        const addresses = JSON.parse(localStorage.getItem('addresses'))||[];
+        const a = addresses[id]; if(!a) return;
+        document.getElementById('addressModalTitle').textContent='Adresi Düzenle';
+        document.getElementById('addressId').value=id;
+        document.getElementById('addressTitle').value=a.title;
+        document.getElementById('addressFirstName').value=a.firstName;
+        document.getElementById('addressLastName').value=a.lastName;
+        document.getElementById('addressPhone').value=a.phone;
+        document.getElementById('addressCity').value=a.city;
+        const districtSelect = document.getElementById('addressDistrict');
+        districtSelect.innerHTML='<option value="">Seçiniz</option>';
+        if(a.city && cityDistricts[a.city]){ cityDistricts[a.city].forEach(d=>{ const o=document.createElement('option'); o.value=d;o.textContent=d;districtSelect.appendChild(o);}); }
+        document.getElementById('addressDistrict').value=a.district;
+        document.getElementById('addressNeighborhood').value=a.neighborhood;
+        document.getElementById('addressDetails').value=a.details;
+        document.getElementById('defaultAddress').checked=a.isDefault;
+        openModal('addressModal');
+    }
+
+    function deleteAddress(id){
+        if(!confirm('Bu adresi silmek istediğinize emin misiniz?')) return;
+        const addresses = JSON.parse(localStorage.getItem('addresses'))||[];
+        addresses.splice(id,1);
+        localStorage.setItem('addresses', JSON.stringify(addresses));
+        renderAddresses(addresses);
+    }
+
+    document.getElementById('addressForm').addEventListener('submit', function(e){
+        e.preventDefault();
+        const addresses = JSON.parse(localStorage.getItem('addresses'))||[];
+        const id = document.getElementById('addressId').value;
+        const isDefault = document.getElementById('defaultAddress').checked;
+        if(isDefault){ addresses.forEach(x=>x.isDefault=false); }
+        const newAddress = {
+            title: document.getElementById('addressTitle').value,
+            firstName: document.getElementById('addressFirstName').value,
+            lastName: document.getElementById('addressLastName').value,
+            phone: document.getElementById('addressPhone').value,
+            city: document.getElementById('addressCity').value,
+            district: document.getElementById('addressDistrict').value,
+            neighborhood: document.getElementById('addressNeighborhood').value,
+            details: document.getElementById('addressDetails').value,
+            isDefault
+        };
+        if(id===''){ addresses.push(newAddress); } else { addresses[id]=newAddress; }
+        localStorage.setItem('addresses', JSON.stringify(addresses));
+        renderAddresses(addresses);
+        document.getElementById('addressSuccess').textContent='Adres başarıyla kaydedildi!';
+        document.getElementById('addressSuccess').style.display='block';
+        setTimeout(()=>document.getElementById('addressSuccess').style.display='none',3000);
+        document.getElementById('addressForm').reset();
+        closeModal('addressModal');
+    });
+
+    document.getElementById('personalInfoForm').addEventListener('submit', function(e){
+        // Sunucuya gönder; JS tarafı engellemesin
+    });
+
+    document.getElementById('passwordChangeForm').addEventListener('submit', function(e){
+        e.preventDefault();
+        const newPassword = document.getElementById('newPassword').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+        if(newPassword !== confirmPassword){
+            const err=document.getElementById('passwordChangeError'); err.textContent='Yeni şifreler eşleşmiyor!'; err.style.display='block'; setTimeout(()=>err.style.display='none',3000); return;
+        }
+        localStorage.setItem('userPassword', newPassword);
+        this.reset();
+        const s=document.getElementById('passwordChangeSuccess'); s.style.display='block'; setTimeout(()=>s.style.display='none',3000);
+    });
+
+    loadUserData();
+});
+</script>
+
+

@@ -1,0 +1,139 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\Ayb\u00FCke\\Desktop\\dotnet-store\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{A69DD488-35B3-E59D-0D3D-B1D30110B36E}|dotnet-store.csproj|c:\\users\\ayb\u00FCke\\desktop\\dotnet-store\\controllers\\uruncontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A69DD488-35B3-E59D-0D3D-B1D30110B36E}|dotnet-store.csproj|solutionrelative:controllers\\uruncontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A69DD488-35B3-E59D-0D3D-B1D30110B36E}|dotnet-store.csproj|c:\\users\\ayb\u00FCke\\desktop\\dotnet-store\\controllers\\usercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A69DD488-35B3-E59D-0D3D-B1D30110B36E}|dotnet-store.csproj|solutionrelative:controllers\\usercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A69DD488-35B3-E59D-0D3D-B1D30110B36E}|dotnet-store.csproj|c:\\users\\ayb\u00FCke\\desktop\\dotnet-store\\models\\urun.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A69DD488-35B3-E59D-0D3D-B1D30110B36E}|dotnet-store.csproj|solutionrelative:models\\urun.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A69DD488-35B3-E59D-0D3D-B1D30110B36E}|dotnet-store.csproj|c:\\users\\ayb\u00FCke\\desktop\\dotnet-store\\views\\urun\\details.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{A69DD488-35B3-E59D-0D3D-B1D30110B36E}|dotnet-store.csproj|solutionrelative:views\\urun\\details.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A69DD488-35B3-E59D-0D3D-B1D30110B36E}|dotnet-store.csproj|c:\\users\\ayb\u00FCke\\desktop\\dotnet-store\\views\\urun\\list.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{A69DD488-35B3-E59D-0D3D-B1D30110B36E}|dotnet-store.csproj|solutionrelative:views\\urun\\list.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A69DD488-35B3-E59D-0D3D-B1D30110B36E}|dotnet-store.csproj|c:\\users\\ayb\u00FCke\\desktop\\dotnet-store\\views\\shared\\partials\\_uruncard.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{A69DD488-35B3-E59D-0D3D-B1D30110B36E}|dotnet-store.csproj|solutionrelative:views\\shared\\partials\\_uruncard.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A69DD488-35B3-E59D-0D3D-B1D30110B36E}|dotnet-store.csproj|c:\\users\\ayb\u00FCke\\desktop\\dotnet-store\\controllers\\homecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A69DD488-35B3-E59D-0D3D-B1D30110B36E}|dotnet-store.csproj|solutionrelative:controllers\\homecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "UrunController.cs",
+              "DocumentMoniker": "C:\\Users\\Ayb\u00FCke\\Desktop\\dotnet-store\\Controllers\\UrunController.cs",
+              "RelativeDocumentMoniker": "Controllers\\UrunController.cs",
+              "ToolTip": "C:\\Users\\Ayb\u00FCke\\Desktop\\dotnet-store\\Controllers\\UrunController.cs",
+              "RelativeToolTip": "Controllers\\UrunController.cs",
+              "ViewState": "AgIAAFsAAAAAAAAAAAAYwGgAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-28T12:32:34.203Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "HomeController.cs",
+              "DocumentMoniker": "C:\\Users\\Ayb\u00FCke\\Desktop\\dotnet-store\\Controllers\\HomeController.cs",
+              "RelativeDocumentMoniker": "Controllers\\HomeController.cs",
+              "ToolTip": "C:\\Users\\Ayb\u00FCke\\Desktop\\dotnet-store\\Controllers\\HomeController.cs",
+              "RelativeToolTip": "Controllers\\HomeController.cs",
+              "ViewState": "AgIAAAwAAAAAAAAAAAA5wBwAAAAuAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-28T12:26:41.942Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "UserController.cs",
+              "DocumentMoniker": "C:\\Users\\Ayb\u00FCke\\Desktop\\dotnet-store\\Controllers\\UserController.cs",
+              "RelativeDocumentMoniker": "Controllers\\UserController.cs",
+              "ToolTip": "C:\\Users\\Ayb\u00FCke\\Desktop\\dotnet-store\\Controllers\\UserController.cs",
+              "RelativeToolTip": "Controllers\\UserController.cs",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAxwBMAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-28T12:23:20.354Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "List.cshtml",
+              "DocumentMoniker": "C:\\Users\\Ayb\u00FCke\\Desktop\\dotnet-store\\Views\\Urun\\List.cshtml",
+              "RelativeDocumentMoniker": "Views\\Urun\\List.cshtml",
+              "ToolTip": "C:\\Users\\Ayb\u00FCke\\Desktop\\dotnet-store\\Views\\Urun\\List.cshtml",
+              "RelativeToolTip": "Views\\Urun\\List.cshtml",
+              "ViewState": "AgIAAI0AAAAAAAAAAAAYwJgAAAA1AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-08-28T12:23:02.782Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "Details.cshtml",
+              "DocumentMoniker": "C:\\Users\\Ayb\u00FCke\\Desktop\\dotnet-store\\Views\\Urun\\Details.cshtml",
+              "RelativeDocumentMoniker": "Views\\Urun\\Details.cshtml",
+              "ToolTip": "C:\\Users\\Ayb\u00FCke\\Desktop\\dotnet-store\\Views\\Urun\\Details.cshtml",
+              "RelativeToolTip": "Views\\Urun\\Details.cshtml",
+              "ViewState": "AgIAAC4AAAAAAAAAAAAYwDkAAAApAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-08-28T12:22:53.918Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Urun.cs",
+              "DocumentMoniker": "C:\\Users\\Ayb\u00FCke\\Desktop\\dotnet-store\\Models\\Urun.cs",
+              "RelativeDocumentMoniker": "Models\\Urun.cs",
+              "ToolTip": "C:\\Users\\Ayb\u00FCke\\Desktop\\dotnet-store\\Models\\Urun.cs",
+              "RelativeToolTip": "Models\\Urun.cs",
+              "ViewState": "AgIAAD8AAAAAAAAAAAAhwEcAAAARAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-28T12:22:32.766Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "_UrunCard.cshtml",
+              "DocumentMoniker": "C:\\Users\\Ayb\u00FCke\\Desktop\\dotnet-store\\Views\\Shared\\Partials\\_UrunCard.cshtml",
+              "RelativeDocumentMoniker": "Views\\Shared\\Partials\\_UrunCard.cshtml",
+              "ToolTip": "C:\\Users\\Ayb\u00FCke\\Desktop\\dotnet-store\\Views\\Shared\\Partials\\_UrunCard.cshtml",
+              "RelativeToolTip": "Views\\Shared\\Partials\\_UrunCard.cshtml",
+              "ViewState": "AgIAAAIAAAAAAAAAAAAYwA0AAAAhAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-08-28T12:22:19.397Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

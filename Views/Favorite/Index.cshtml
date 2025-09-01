@@ -1,0 +1,30 @@
+@model List<dotnet_store.Models.Urun>
+
+@{
+    ViewData["Title"] = "Favorilerim";
+}
+
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3 class="mb-0">Favorilerim</h3>
+        <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary btn-sm">Alışverişe devam et</a>
+    </div>
+
+    @if(Model == null || !Model.Any())
+    {
+        <div class="alert alert-info">Henüz favori ürününüz bulunmuyor.</div>
+    }
+    else
+    {
+        <div class="row g-3">
+            @foreach(var urun in Model)
+            {
+                <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                    @await Html.PartialAsync("~/Views/Shared/Partials/_UrunCard.cshtml", urun)
+                </div>
+            }
+        </div>
+    }
+</div>
+
+
