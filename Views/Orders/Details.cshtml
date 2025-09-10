@@ -1,0 +1,120 @@
+@model dotnet_store.Controllers.OrderDetailsViewModel
+
+@section Bar{
+    @await Html.PartialAsync("Partials/_Navbar")
+}
+
+<div class="container py-4">
+    <a asp-action="Index" class="text-decoration-none">← Geri</a>
+    <h2 class="my-3">Sipariş Detayı</h2>
+
+    <div class="card mb-3">
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <div><strong>Sipariş No:</strong> @Model.Order.OrderNumber</div>
+                    <div><strong>Sipariş Tarihi:</strong> @Model.Order.CreatedAt.ToLocalTime().ToString("dd MMMM yyyy")</div>
+                    <div><strong>Sipariş Özeti:</strong> @Model.Shipments Teslimat, @Model.TotalItems Ürün</div>
+                    <div><strong>Sipariş Durumu:</strong> @Model.Order.Status</div>
+                    <div><strong>Toplam:</strong> @Model.Order.Total.ToString("C")</div>
+                </div>
+                <div class="col-md-6">
+                    @if (Model.Address != null)
+                    {
+                        <div class="text-muted">Teslimat Adresi</div>
+                        <div class="fw-semibold">@Model.Address.FullName</div>
+                        <div>@Model.Address.City @Model.Address.District @Model.Address.Neighborhood</div>
+                        <div>@Model.Address.Details</div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-3">
+        <div class="card-body">
+            <div class="d-flex align-items-center gap-3">
+                @if (string.Equals(Model.Order.Status, "Cancelled", StringComparison.OrdinalIgnoreCase))
+                {
+                    <span class="badge rounded-pill bg-danger"><i class="fas fa-times me-1"></i>İptal Edildi</span>
+                    <span class="badge rounded-pill bg-secondary">Hazırlanıyor</span>
+                    <span class="badge rounded-pill bg-secondary">Kargoya Verildi</span>
+                    <span class="badge rounded-pill bg-secondary">Teslim Edildi</span>
+                }
+                else
+                {
+                    <span class="badge rounded-pill bg-success">Siparişiniz Alındı</span>
+                    <span class="badge rounded-pill bg-secondary">Hazırlanıyor</span>
+                    <span class="badge rounded-pill bg-secondary">Kargoya Verildi</span>
+                    <span class="badge rounded-pill bg-secondary">Teslim Edildi</span>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <h5 class="mb-3">Ürünler</h5>
+            @foreach (var it in Model.Items)
+            {
+                var line = (it.UnitPrice * it.Quantity).ToString("C");
+                var imgPath = "/img/1.jpeg"; // sabit örnek görsel
+                <div class="d-flex align-items-center justify-content-between py-3 border-bottom">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="product-photo" style="width:64px;height:64px;background:#000;border-radius:8px;overflow:hidden;display:flex;align-items:center;justify-content:center;">
+                            <img src="@imgPath" alt="@it.Urun?.ProductName" style="width:100%;height:100%;object-fit:cover;display:block;" />
+                        </div>
+                        <div>
+                            <div class="product-name-chip" style="display:inline-block;background:#6f42c1;color:#fff;padding:4px 8px;border-radius:6px;font-weight:600;margin-bottom:4px;">aybükedurmus</div>
+                            <div class="text-muted small">Ürün ID: @it.UrunId</div>
+                            <div class="text-muted">Adet: @it.Quantity</div>
+                        </div>
+                    </div>
+                    <div class="fw-bold">@line</div>
+                </div>
+            }
+            <div class="d-flex justify-content-end gap-3 pt-3">
+                <div class="text-muted">Kargo: @Model.Order.ShippingCost.ToString("C")</div>
+                <div class="fw-bold">Toplam: @Model.Order.Total.ToString("C")</div>
+            </div>
+            @if (!string.Equals(Model.Order.Status, "Cancelled", StringComparison.OrdinalIgnoreCase))
+            {
+                <form asp-controller="Orders" asp-action="Cancel" method="post" class="mt-3 text-end">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="orderNumber" value="@Model.Order.OrderNumber" />
+                    <button type="submit" class="btn btn-outline-danger">Siparişi İptal Et</button>
+                </form>
+            }
+        </div>
+    </div>
+</div>
+
+<style>
+    .product-photo {
+        width: 64px;
+        height: 64px;
+        background: #000;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+    }
+    .product-photo img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
+    .product-name-chip {
+        display: inline-block;
+        background: #6f42c1; /* mor */
+        color: #fff;
+        padding: 4px 8px;
+        border-radius: 6px;
+        font-weight: 600;
+        margin-bottom: 4px;
+    }
+</style>
+
+

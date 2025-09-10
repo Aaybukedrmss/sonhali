@@ -1,6 +1,7 @@
 using dotnet_store.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
+using dotnet_store.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +16,8 @@ builder.Services.AddDbContext<DataContext>(options =>
 
 builder.Services.AddIdentity<AppUser,IdentityRole<int>>()
     .AddEntityFrameworkStores<DataContext>();
+// Payment services
+builder.Services.AddScoped<IPaymentService, IyzipayPaymentService>();
 
 builder.Services.Configure<IdentityOptions>(options =>
 {

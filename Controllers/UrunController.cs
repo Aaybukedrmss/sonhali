@@ -30,6 +30,7 @@ public class UrunController : Controller
         }
     }
 
+
     public async Task<ActionResult> Details(int id)
     {
         try

@@ -85,7 +85,13 @@
             </div>
 
             <div class="tab-content" id="addresses">
-                <button class="bilgibutton" id="addAddressBtn" type="button">Yeni Adres Ekle</button>
+                <form id="__afForm">@Html.AntiForgeryToken()</form>
+                <div class="address-toolbar">
+                    <h3>Adreslerim</h3>
+                    <div class="address-toolbar-actions">
+                        <button class="bilgibutton" id="addAddressBtn" type="button">Yeni Adres Ekle</button>
+                    </div>
+                </div>
                 <div class="address-list" id="addressList"></div>
             </div>
         </div>
@@ -94,7 +100,7 @@
 </div>
 
 <!-- Adres Ekleme/Düzenleme Modalı -->
-<div class="modal" id="addressModal">
+<div class="modal drawer" id="addressModal">
     <div class="modal-content">
         <div class="modal-header">
             <h3 id="addressModalTitle">Yeni Adres Ekle</h3>
@@ -104,21 +110,21 @@
             <input type="hidden" id="addressId">
             <div class="form-group">
                 <label for="addressTitle">Adres Başlığı</label>
-                <input type="text" id="addressTitle" name="addressTitle" required>
+                <input type="text" id="addressTitle" name="addressTitle" placeholder="Ev, İş, Aile vb." required>
             </div>
             <div class="form-row">
                 <div class="form-group">
                     <label for="addressFirstName">Ad</label>
-                    <input type="text" id="addressFirstName" name="addressFirstName" required>
+                    <input type="text" id="addressFirstName" name="addressFirstName" placeholder="Ad" required>
                 </div>
                 <div class="form-group">
                     <label for="addressLastName">Soyad</label>
-                    <input type="text" id="addressLastName" name="addressLastName" required>
+                    <input type="text" id="addressLastName" name="addressLastName" placeholder="Soyad" required>
                 </div>
             </div>
             <div class="form-group">
                 <label for="addressPhone">Telefon</label>
-                <input type="tel" id="addressPhone" name="addressPhone" required>
+                <input type="tel" id="addressPhone" name="addressPhone" placeholder="05xxxxxxxxx" required>
             </div>
             <div class="form-group">
                 <label for="addressCity">İl</label>
@@ -137,19 +143,20 @@
             </div>
             <div class="form-group">
                 <label for="addressNeighborhood">Mahalle</label>
-                <input type="text" id="addressNeighborhood" name="addressNeighborhood" required>
+                <input type="text" id="addressNeighborhood" name="addressNeighborhood" placeholder="Mahalle" required>
             </div>
             <div class="form-group">
                 <label for="addressDetails">Adres Detayı</label>
-                <textarea id="addressDetails" name="addressDetails" rows="3" required></textarea>
+                <textarea id="addressDetails" name="addressDetails" rows="3" placeholder="Cadde/Sokak, No, Daire, Kat, Posta kodu vb." required></textarea>
             </div>
             <div class="checkbox-group">
                 <input type="checkbox" id="defaultAddress" name="defaultAddress">
                 <label for="defaultAddress">Varsayılan adresim olarak ayarla</label>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" id="cancelAddress">İptal</button>
-                <button type="submit" class="btn">Kaydet</button>
+                <button type="button" class="btn btn-secondary" id="cancelAddress">Kapat</button>
+                <button type="submit" class="btn" id="saveAddress">Kaydet</button>
+                <button type="submit" class="btn btn-outline" id="saveAndNew">Kaydet ve Yeni Ekle</button>
             </div>
             <div class="success-message" id="addressSuccess"></div>
             <div class="error-message" id="addressError"></div>
@@ -177,13 +184,43 @@
     .profile-page .bilgibutton{background:var(--primary);color:#fff;border:0;border-radius:.5rem;padding:.5rem 1rem}
     .profile-page .success-message,.profile-page .error-message{display:none;margin-top:.5rem}
 
-    .profile-page .modal{display:none;position:fixed;inset:0;align-items:center;justify-content:center;background:rgba(0,0,0,.4);z-index:1060}
-    .profile-page .modal-content{background:#fff;border-radius:.75rem;width:600px;max-width:95%;box-shadow:0 10px 20px rgba(0,0,0,.15)}
-    .profile-page .modal-header{display:flex;align-items:center;justify-content:space-between;padding:1rem 1.25rem;border-bottom:1px solid #e9ecef}
-    .profile-page .close-btn{border:0;background:transparent;font-size:1.5rem;line-height:1}
+    .profile-page .modal{display:none;position:fixed;inset:0;align-items:center;justify-content:center;background:rgba(17,24,39,.45);backdrop-filter:saturate(140%) blur(2px);z-index:1060}
+    .profile-page .modal.drawer{justify-content:flex-end}
+    .profile-page .modal-content{background:#fff;border-radius:.75rem;width:600px;max-width:95%;box-shadow:0 12px 30px rgba(0,0,0,.18)}
+    .profile-page .modal.drawer .modal-content{width:440px;max-width:92%;height:100vh;border-radius:0;border-left:1px solid #e9ecef;transform:translateX(100%);transition:transform .25s ease;display:flex;flex-direction:column;will-change:transform}
+    .profile-page .modal.open.drawer .modal-content{transform:translateX(0)}
+    .profile-page .modal-header{position:sticky;top:0;z-index:1;display:flex;align-items:center;justify-content:space-between;padding:1rem 1.25rem;border-bottom:1px solid #edf2f7;background:linear-gradient(180deg,#ffffff 0%,#f8fafc 100%)}
+    .profile-page .close-btn{border:0;background:#f1f5f9;color:#111827;border-radius:.5rem;width:36px;height:36px;display:inline-flex;align-items:center;justify-content:center;font-size:1.25rem;line-height:1;cursor:pointer;transition:background .15s}
+    .profile-page .close-btn:hover{background:#e2e8f0}
     .profile-page .form-row{display:flex;gap:.75rem}
-    .profile-page .address-list .address-item{border:1px solid #f1f3f5;border-radius:.5rem;padding:.75rem;margin:.5rem 0}
-    .profile-page .address-actions{display:flex;gap:.5rem}
+    .profile-page #addressForm{padding:1rem 1.25rem;overflow:auto;flex:1}
+    .profile-page .modal-footer{position:sticky;bottom:0;display:flex;gap:.5rem;justify-content:flex-end;padding:0.75rem 1.25rem;background:#fff;border-top:1px solid #edf2f7}
+    .profile-page .address-toolbar{display:flex;align-items:center;justify-content:space-between;margin:.5rem 0 1rem}
+    .profile-page .address-toolbar h3{margin:0;font-size:1.1rem}
+    .profile-page .address-toolbar-actions{display:flex;gap:.5rem;flex-wrap:wrap;justify-content:flex-end}
+
+    .profile-page .address-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:.75rem}
+    .profile-page .address-list .address-item{border:1px solid #f1f3f5;border-radius:.75rem;padding:1rem;min-height:220px;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.04);transition:box-shadow .2s,border-color .2s}
+    .profile-page .address-list .address-item:hover{box-shadow:0 4px 12px rgba(0,0,0,.08);border-color:#e9ecef}
+    .profile-page .address-actions{display:flex;gap:.5rem;justify-content:flex-end;flex-wrap:wrap;margin-top:.75rem}
+
+    .profile-page .address-add-tile{display:flex;align-items:center;justify-content:center;min-height:220px;border:2px dashed #dee2e6;border-radius:.75rem;background:#fafbfc;color:#111827;cursor:pointer;transition:border-color .2s,background .2s}
+    .profile-page .address-add-tile:hover{border-color:#cbd5e1;background:#f8fafc}
+    .profile-page .address-add-tile .plus{font-size:1.5rem;margin-right:.5rem}
+
+    .profile-page .bilgibutton.outline{background:#fff;color:#495057;border:1px solid #dee2e6}
+    .profile-page .btn{background:#111827;color:#fff;border:0;border-radius:.5rem;padding:.5rem .8rem;cursor:pointer}
+    .profile-page .btn.btn-outline{background:#fff;color:#111827;border:1px solid #111827}
+    .profile-page .btn.btn-secondary{background:#6b7280}
+    .profile-page input[type="text"], .profile-page input[type="tel"], .profile-page select, .profile-page textarea{width:100%;border:1px solid #e9ecef;border-radius:.5rem;padding:.6rem .7rem;transition:border-color .15s, box-shadow .15s;font-size:.95rem;background:#fff}
+    .profile-page input[type="text"]:focus, .profile-page input[type="tel"]:focus, .profile-page select:focus, .profile-page textarea:focus{outline:none;border-color:#6366f1;box-shadow:0 0 0 3px rgba(99,102,241,.15)}
+    .profile-page .form-row .form-group{flex:1}
+    .profile-page textarea{resize:vertical}
+    .profile-page .checkbox-group input{margin-top:.25rem}
+    .profile-page .modal-header h3{font-size:1.15rem;margin:0}
+    .profile-page label{font-weight:600;margin-bottom:.25rem}
+    .profile-page h4{display:flex;gap:.5rem;align-items:center;margin:0 0 .5rem 0}
+    .profile-page .badge{display:inline-block;background:#111827;color:#fff;border-radius:1rem;padding:.1rem .5rem;font-size:.75rem}
 </style>
 
 <script>
@@ -217,19 +254,46 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    function openModal(id){ document.getElementById(id).style.display='flex'; }
-    function closeModal(id){ document.getElementById(id).style.display='none'; }
+    function openModal(id){
+        const el = document.getElementById(id);
+        el.style.display='flex';
+        requestAnimationFrame(()=>{ el.classList.add('open'); });
+    }
+    function closeModal(id){
+        const el = document.getElementById(id);
+        el.classList.remove('open');
+        setTimeout(()=>{ el.style.display='none'; },250);
+    }
 
-    document.getElementById('addAddressBtn').addEventListener('click', function(){
+    function openNewAddressModal(){
         document.getElementById('addressModalTitle').textContent='Yeni Adres Ekle';
         document.getElementById('addressForm').reset();
         document.getElementById('addressId').value='';
         openModal('addressModal');
-    });
+        setTimeout(()=>document.getElementById('addressTitle').focus(),50);
+    }
+    document.getElementById('addAddressBtn').addEventListener('click', openNewAddressModal);
     document.getElementById('closeAddressModal').addEventListener('click', function(){ closeModal('addressModal'); });
     document.getElementById('cancelAddress').addEventListener('click', function(){ closeModal('addressModal'); });
+    document.getElementById('addressModal').addEventListener('click', function(e){ if(e.target.id==='addressModal'){ closeModal('addressModal'); } });
+    document.addEventListener('keydown', function(e){ if(e.key==='Escape'){ closeModal('addressModal'); } });
 
-    function loadUserData(){
+    function getRequestVerificationToken(){
+        const f = document.querySelector('#__afForm input[name="__RequestVerificationToken"]');
+        return f ? f.value : '';
+    }
+
+    async function fetchJson(url, options={}){
+        const headers = options.headers || {};
+        headers['Content-Type'] = 'application/json';
+        const token = getRequestVerificationToken();
+        if(token){ headers['RequestVerificationToken'] = token; }
+        const resp = await fetch(url, { credentials: 'same-origin', ...options, headers });
+        if(!resp.ok){ throw new Error(await resp.text()); }
+        return resp.status === 204 ? null : resp.json();
+    }
+
+    async function loadUserData(){
         const userData = JSON.parse(localStorage.getItem('userData')) || {firstName:'', lastName:'', email:'', phone:'', marketingPermission:true};
         document.getElementById('firstName').value = userData.firstName;
         document.getElementById('lastName').value = userData.lastName;
@@ -239,71 +303,89 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('marketingPermission').checked = userData.marketingPermission;
         document.getElementById('userFullName').textContent = `${userData.firstName || '@ViewBag.FullName'} ${userData.lastName || ''}`.trim();
 
-        const addresses = JSON.parse(localStorage.getItem('addresses')) || [];
-        renderAddresses(addresses);
+        try{
+            const addresses = await fetchJson('/Profile/Addresses');
+            renderAddresses(addresses);
+        }catch(err){
+            document.getElementById('addressList').innerHTML = '<p>Adresler yüklenemedi.</p>';
+        }
     }
 
     function renderAddresses(addresses){
         const addressList = document.getElementById('addressList');
         addressList.innerHTML='';
-        if(addresses.length===0){ addressList.innerHTML='<p>Kayıtlı adres bulunmamaktadır.</p>'; return; }
-        addresses.forEach((address, index)=>{
+        if(addresses.length===0){ addressList.innerHTML='<p>Kayıtlı adres bulunmamaktadır.</p>'; }
+        addresses.forEach((address)=>{
             const el = document.createElement('div');
             el.className='address-item';
             el.innerHTML = `
-                <h4>${address.title} ${address.isDefault ? '(Varsayılan)' : ''}</h4>
-                <p>${address.firstName} ${address.lastName}</p>
+                <h4>${address.title} ${address.isDefault ? '<span class="badge">Varsayılan</span>' : ''}</h4>
+                <p>${address.fullName}</p>
                 <p>${address.phone}</p>
                 <p>${address.city}, ${address.district}, ${address.neighborhood}</p>
                 <p>${address.details}</p>
                 <div class="address-actions">
-                    <button class="btn btn-secondary edit-address" data-id="${index}">Düzenle</button>
-                    <button class="btn btn-danger delete-address" data-id="${index}">Sil</button>
+                    <button class="btn btn-secondary edit-address" data-id="${address.id}">Düzenle</button>
+                    <button class="btn btn-danger delete-address" data-id="${address.id}">Sil</button>
+                    ${address.isDefault ? '' : `<button class="btn" data-default="${address.id}">Varsayılan Yap</button>`}
                 </div>`;
             addressList.appendChild(el);
         });
         document.querySelectorAll('.edit-address').forEach(btn=>btn.addEventListener('click',function(){editAddress(this.getAttribute('data-id'));}));
         document.querySelectorAll('.delete-address').forEach(btn=>btn.addEventListener('click',function(){deleteAddress(this.getAttribute('data-id'));}));
+        document.querySelectorAll('[data-default]').forEach(btn=>btn.addEventListener('click',function(){setDefault(this.getAttribute('data-default'));}));
+
+        const addTile = document.createElement('button');
+        addTile.type = 'button';
+        addTile.className = 'address-add-tile';
+        addTile.id = 'addressAddTile';
+        addTile.innerHTML = '<span class="plus">+</span> Yeni Adres Ekle';
+        addressList.appendChild(addTile);
+        addTile.addEventListener('click', openNewAddressModal);
     }
 
-    function editAddress(id){
-        const addresses = JSON.parse(localStorage.getItem('addresses'))||[];
-        const a = addresses[id]; if(!a) return;
+    async function editAddress(id){
+        const aEl = [...document.querySelectorAll('.edit-address')].find(b=>b.getAttribute('data-id')==id)?.closest('.address-item');
+        let title = aEl?.querySelector('h4')?.textContent || '';
+        title = title.replace('Varsayılan','').trim();
+        const full = aEl?.querySelector('p')?.textContent || '';
+        const [city, district, neighborhood] = (aEl?.querySelectorAll('p')[2]?.textContent || '').split(',').map(x=>x.trim());
+        const details = (aEl?.querySelectorAll('p')[3]?.textContent || '').trim();
         document.getElementById('addressModalTitle').textContent='Adresi Düzenle';
         document.getElementById('addressId').value=id;
-        document.getElementById('addressTitle').value=a.title;
-        document.getElementById('addressFirstName').value=a.firstName;
-        document.getElementById('addressLastName').value=a.lastName;
-        document.getElementById('addressPhone').value=a.phone;
-        document.getElementById('addressCity').value=a.city;
+        document.getElementById('addressTitle').value=title;
+        document.getElementById('addressFirstName').value=full.split(' ').slice(0,-1).join(' ');
+        document.getElementById('addressLastName').value=full.split(' ').slice(-1).join(' ');
+        document.getElementById('addressPhone').value=aEl?.querySelectorAll('p')[1]?.textContent || '';
+        document.getElementById('addressCity').value=city?.toLowerCase();
         const districtSelect = document.getElementById('addressDistrict');
         districtSelect.innerHTML='<option value="">Seçiniz</option>';
-        if(a.city && cityDistricts[a.city]){ cityDistricts[a.city].forEach(d=>{ const o=document.createElement('option'); o.value=d;o.textContent=d;districtSelect.appendChild(o);}); }
-        document.getElementById('addressDistrict').value=a.district;
-        document.getElementById('addressNeighborhood').value=a.neighborhood;
-        document.getElementById('addressDetails').value=a.details;
-        document.getElementById('defaultAddress').checked=a.isDefault;
+        const cityVal = document.getElementById('addressCity').value;
+        if(cityVal && cityDistricts[cityVal]){ cityDistricts[cityVal].forEach(d=>{ const o=document.createElement('option'); o.value=d;o.textContent=d;districtSelect.appendChild(o);}); }
+        document.getElementById('addressDistrict').value=district;
+        document.getElementById('addressNeighborhood').value=neighborhood;
+        document.getElementById('addressDetails').value=details;
+        document.getElementById('defaultAddress').checked=false;
         openModal('addressModal');
     }
 
-    function deleteAddress(id){
+    async function deleteAddress(id){
         if(!confirm('Bu adresi silmek istediğinize emin misiniz?')) return;
-        const addresses = JSON.parse(localStorage.getItem('addresses'))||[];
-        addresses.splice(id,1);
-        localStorage.setItem('addresses', JSON.stringify(addresses));
-        renderAddresses(addresses);
+        try{
+            await fetchJson(`/Profile/Address/${id}`, { method: 'DELETE' });
+            const addresses = await fetchJson('/Profile/Addresses');
+            renderAddresses(addresses);
+        }catch(err){ alert('Silme işlemi başarısız.'); }
     }
 
     document.getElementById('addressForm').addEventListener('submit', function(e){
         e.preventDefault();
-        const addresses = JSON.parse(localStorage.getItem('addresses'))||[];
+        const submitterId = e.submitter ? e.submitter.id : 'saveAddress';
         const id = document.getElementById('addressId').value;
         const isDefault = document.getElementById('defaultAddress').checked;
-        if(isDefault){ addresses.forEach(x=>x.isDefault=false); }
-        const newAddress = {
+        const payload = {
             title: document.getElementById('addressTitle').value,
-            firstName: document.getElementById('addressFirstName').value,
-            lastName: document.getElementById('addressLastName').value,
+            fullName: (document.getElementById('addressFirstName').value + ' ' + document.getElementById('addressLastName').value).trim(),
             phone: document.getElementById('addressPhone').value,
             city: document.getElementById('addressCity').value,
             district: document.getElementById('addressDistrict').value,
@@ -311,15 +393,39 @@ document.addEventListener('DOMContentLoaded', function() {
             details: document.getElementById('addressDetails').value,
             isDefault
         };
-        if(id===''){ addresses.push(newAddress); } else { addresses[id]=newAddress; }
-        localStorage.setItem('addresses', JSON.stringify(addresses));
-        renderAddresses(addresses);
-        document.getElementById('addressSuccess').textContent='Adres başarıyla kaydedildi!';
-        document.getElementById('addressSuccess').style.display='block';
-        setTimeout(()=>document.getElementById('addressSuccess').style.display='none',3000);
-        document.getElementById('addressForm').reset();
-        closeModal('addressModal');
+        const method = id === '' ? 'POST' : 'PUT';
+        const url = id === '' ? '/Profile/Address' : `/Profile/Address/${id}`;
+        fetchJson(url, { method, body: JSON.stringify(payload) })
+            .then(async _ => {
+                const addresses = await fetchJson('/Profile/Addresses');
+                renderAddresses(addresses);
+                document.getElementById('addressSuccess').textContent='Adres başarıyla kaydedildi!';
+                document.getElementById('addressSuccess').style.display='block';
+                setTimeout(()=>document.getElementById('addressSuccess').style.display='none',3000);
+                if(submitterId === 'saveAndNew'){
+                    const keepDefault = document.getElementById('defaultAddress').checked;
+                    document.getElementById('addressForm').reset();
+                    document.getElementById('defaultAddress').checked = keepDefault;
+                    setTimeout(()=>document.getElementById('addressTitle').focus(),50);
+                } else {
+                    document.getElementById('addressForm').reset();
+                    closeModal('addressModal');
+                }
+            })
+            .catch(_ => {
+                document.getElementById('addressError').textContent='Adres kaydedilemedi!';
+                document.getElementById('addressError').style.display='block';
+                setTimeout(()=>document.getElementById('addressError').style.display='none',3000);
+            });
     });
+
+    async function setDefault(id){
+        try{
+            await fetchJson(`/Profile/SetDefaultAddress/${id}`, { method: 'POST' });
+            const addresses = await fetchJson('/Profile/Addresses');
+            renderAddresses(addresses);
+        }catch(err){ alert('Varsayılan ayarlanamadı.'); }
+    }
 
     document.getElementById('personalInfoForm').addEventListener('submit', function(e){
         // Sunucuya gönder; JS tarafı engellemesin

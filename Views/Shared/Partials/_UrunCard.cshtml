@@ -114,10 +114,15 @@
                 </a>
                 @if (Model.StockQuantity > 0)
                 {
-                    <button class="btn btn-primary btn-sm">
-                        <i class="fas fa-shopping-cart me-1"></i>
-                        Sepete Ekle
-                    </button>
+                    <form asp-controller="Cart" asp-action="Add" method="post" class="m-0">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="urunId" value="@Model.Id" />
+                        <input type="hidden" name="quantity" value="1" />
+                        <button type="submit" class="btn btn-primary btn-sm">
+                            <i class="fas fa-shopping-cart me-1"></i>
+                            Sepete Ekle
+                        </button>
+                    </form>
                 }
                 else
                 {

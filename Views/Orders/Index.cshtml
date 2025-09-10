@@ -1,0 +1,92 @@
+@model List<dotnet_store.Controllers.OrderListViewModel>
+
+@section Bar{
+    @await Html.PartialAsync("Partials/_Navbar")
+}
+
+<div class="container">
+    <h1>Siparişlerim</h1>
+    <div class="d-flex gap-2 mb-3">
+        <input type="text" class="form-control" placeholder="Ürün ismi veya marka ara">
+        <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary">Tüm Siparişler</a>
+    </div>
+    <div class="filters d-flex gap-2 mb-4">
+        <button class="btn btn-primary active" data-status="All">Tümü</button>
+        <button class="btn btn-outline-secondary" data-status="Pending">Devam Eden Siparişler</button>
+        <button class="btn btn-outline-secondary" data-status="Paid">Tamamlanan</button>
+        <button class="btn btn-outline-secondary" data-status="Cancelled">İptaller</button>
+    </div>
+
+    <table class="table order-table">
+        <thead>
+            <tr>
+                <th>Sipariş Tarihi</th>
+                <th>Sipariş Özeti</th>
+                <th>Alıcı</th>
+                <th>Tutar</th>
+                <th>Sipariş Detayı</th>
+            </tr>
+        </thead>
+        <tbody>
+        @if (Model != null && Model.Any())
+        {
+            foreach (var o in Model)
+            {
+                <tr data-status="@o.Order.Status">
+                    <td>@o.Order.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</td>
+                    <td>
+                        <div><strong>No:</strong> @o.Order.OrderNumber</div>
+                        <div><strong>Kargo:</strong> @o.Order.ShippingProvider (@o.Order.ShippingCost.ToString("C"))</div>
+                        @if (o.Items.Any())
+                        {
+                            <div class="small text-muted">@string.Join(", ", o.Items.Select(i => i.Urun!.ProductName))</div>
+                        }
+                    </td>
+                    <td>@(o.Address?.FullName ?? "-")</td>
+                    <td>@o.Order.Total.ToString("C")</td>
+                    <td>
+                        <a asp-controller="Orders" asp-action="Details" asp-route-orderNumber="@o.Order.OrderNumber" class="btn btn-outline-primary btn-sm">Göster</a>
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="5" class="text-center">Henüz siparişiniz yok.</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>
+
+<style>
+    .order-table thead th { font-weight: 600; }
+    details summary { cursor: pointer; }
+    details summary::-webkit-details-marker { display:none; }
+    details[open] summary { font-weight: 600; }
+</style>
+
+<script>
+    (function(){
+        const buttons = document.querySelectorAll('.filters [data-status]');
+        buttons.forEach(btn => {
+            btn.addEventListener('click', function(){
+                buttons.forEach(b => b.classList.remove('btn-primary','active'));
+                buttons.forEach(b => b.classList.add('btn-outline-secondary'));
+                this.classList.remove('btn-outline-secondary');
+                this.classList.add('btn-primary','active');
+                const status = this.dataset.status;
+                document.querySelectorAll('tbody tr').forEach(row => {
+                    if (status === 'All' || row.dataset.status === status) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            });
+        });
+    })();
+</script>
+
+

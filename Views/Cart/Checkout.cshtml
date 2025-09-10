@@ -1,0 +1,162 @@
+@model dotnet_store.Models.CheckoutViewModel
+
+@section Bar{
+    @await Html.PartialAsync("Partials/_Navbar")
+}
+
+<div class="container py-4">
+    <h2 class="mb-4">Ödeme / Teslimat</h2>
+
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-body">
+                    <form asp-action="Checkout" method="post">
+                        @Html.AntiForgeryToken()
+
+                        <!-- Gizli bağlayıcılar (Model binding için) -->
+                        <select asp-for="SelectedAddressId" id="addressHidden" class="form-select d-none" asp-items="@(new SelectList(Model.Addresses ?? new List<dotnet_store.Models.UserAddress>(), "Id", "Title"))"></select>
+                        <select asp-for="ShippingProvider" class="form-select d-none" id="shippingProvider"></select>
+
+                        <div class="left">
+                            <div class="adres-container">
+                                <!-- Teslimat Adresi -->
+                                <div class="adres">
+                                    <h3>Teslimat Adresi <a asp-controller="Profile" asp-action="Index" class="degistir" data-target="teslimat">Ekle/Değiştir</a></h3>
+                                    @if(Model.Addresses != null && Model.Addresses.Any())
+                                    {
+                                        foreach (var a in Model.Addresses)
+                                        {
+                                            var selected = a.Id == Model.SelectedAddressId;
+                                            <div class="adres-kutu @(selected ? "secili" : "")" data-address-id="@a.Id">
+                                                <strong>@a.Title @if(a.IsDefault){<span class="seciliadres">(Birincil Adresim)</span>}</strong>
+                                                <a asp-controller="Profile" asp-action="Index" class="degistir" data-target="teslimat">Düzenle</a>
+                                                <p>@a.City @a.District @a.Neighborhood @a.Details</p>
+                                            </div>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <div class="alert alert-warning">Kayıtlı adresiniz yok. Lütfen bir adres ekleyin.</div>
+                                    }
+                                </div>
+
+                                <!-- Fatura Adresi (görsel amaçlı) -->
+                                <div class="adres mt-3">
+                                    <h3 class="gri">Fatura Adresi <a asp-controller="Profile" asp-action="Index" class="degistir" data-target="fatura">Ekle/Değiştir</a></h3>
+                                    <div class="adres-kutu pasif">
+                                        <strong>Ev <span class="gri">(Birincil Adresim)</span></strong>
+                                        <a asp-controller="Profile" asp-action="Index" class="degistir" data-target="fatura">Düzenle</a>
+                                        <p>@(Model.Addresses?.FirstOrDefault(a => a.Id == Model.SelectedAddressId)?.City) @(Model.Addresses?.FirstOrDefault(a => a.Id == Model.SelectedAddressId)?.District)</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <label class="check mt-3 d-block">
+                                <input type="checkbox" id="sameAddress" checked>
+                                Teslimat ve fatura adresim aynı.
+                            </label>
+
+                            <h2 class="mt-4">Teslimat Seçenekleri</h2>
+                            @foreach (var opt in Model.ShippingOptions)
+                            {
+                                var isChecked = string.Equals(Model.ShippingProvider, opt.Provider, StringComparison.OrdinalIgnoreCase);
+                                <div class="teslimat-secim d-flex align-items-center gap-3 mb-2">
+                                    <input type="radio" name="shippingProviderRadio" value="@opt.Provider" data-cost="@opt.Cost.ToString(System.Globalization.CultureInfo.InvariantCulture)" @(isChecked ? "checked" : null) />
+                                    <div class="teslimatdiv">
+                                        <i class="fa-solid fa-truck "></i>
+                                        <strong>@opt.DisplayName</strong>
+                                        <p class="kargoucreti">@opt.Cost.ToString("C")</p>
+                                    </div>
+                                    <div class="tarih ms-auto">
+                                        <span>Tahmini Kargoya Verilme Tarihi</span>
+                                        <strong>@DateTime.UtcNow.AddDays(2).ToString("dd MMMM dddd", System.Globalization.CultureInfo.GetCultureInfo("tr-TR"))</strong>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+
+                        <button type="submit" class="btn btn-primary mt-3">Siparişi Onayla</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card" id="orderSummary" data-subtotal="@Model.Subtotal.ToString(System.Globalization.CultureInfo.InvariantCulture)">
+                <div class="card-body">
+                    <h5 class="card-title">Sipariş Özeti</h5>
+                    <div class="d-flex justify-content-between">
+                        <span>Ara Toplam</span>
+                        <strong>@Model.Subtotal.ToString("C")</strong>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <span>Kargo</span>
+                        <strong id="shippingAmount">@Model.ShippingCost.ToString("C")</strong>
+                    </div>
+                    <hr />
+                    <div class="d-flex justify-content-between">
+                        <span>Toplam</span>
+                        <strong id="totalAmount">@Model.Total.ToString("C")</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function(){
+        const select = document.getElementById('shippingProvider');
+        const addrSelect = document.getElementById('addressHidden');
+        if (!select) return;
+        // Kargo seçenekleri (radio)
+        document.querySelectorAll('input[name="shippingProviderRadio"]').forEach(r => {
+            r.addEventListener('change', function(){
+                select.value = this.value; // gizli select güncelle
+                const cost = parseFloat(this.getAttribute('data-cost')) || 0;
+                const shippingEl = document.getElementById('shippingAmount');
+                const totalEl = document.getElementById('totalAmount');
+                const summary = document.getElementById('orderSummary');
+                const subtotal = summary ? parseFloat(summary.dataset.subtotal) || 0 : 0;
+                const total = subtotal + cost;
+                if (shippingEl) shippingEl.textContent = cost.toLocaleString(undefined, { style: 'currency', currency: 'TRY' });
+                if (totalEl) totalEl.textContent = total.toLocaleString(undefined, { style: 'currency', currency: 'TRY' });
+            });
+        });
+
+        // Sayfa yüklenince mevcut checked seçeneğe göre tutarları bir kez ayarla
+        const checked = document.querySelector('input[name="shippingProviderRadio"]:checked');
+        if (checked) {
+            const evt = new Event('change');
+            checked.dispatchEvent(evt);
+            select.value = checked.value;
+        }
+
+        // Adres kutuları tıklanınca seçimi güncelle
+        document.querySelectorAll('.adres-kutu').forEach(box => {
+            box.addEventListener('click', function(){
+                document.querySelectorAll('.adres-kutu').forEach(b => b.classList.remove('secili'));
+                this.classList.add('secili');
+                const id = this.getAttribute('data-address-id');
+                if (addrSelect && id) addrSelect.value = id;
+            });
+        });
+    })();
+</script>
+
+<style>
+    .adres-container { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    .adres h3 { display: flex; justify-content: space-between; align-items: center; font-size: 1.1rem; }
+    .adres .degistir { font-size: .95rem; }
+    .adres-kutu { border: 1px solid #dee2e6; border-radius: 8px; padding: 16px; cursor: pointer; }
+    .adres-kutu.secili { border-color: #0d6efd; box-shadow: 0 0 0 2px rgba(13,110,253,.25); }
+    .adres-kutu.pasif { opacity: .7; }
+    .seciliadres { color: #198754; font-weight: 600; }
+    .teslimat-secim { border: 1px solid #dee2e6; border-radius: 8px; padding: 12px 16px; }
+    .teslimatdiv { display: flex; align-items: center; gap: 10px; }
+    .kargoucreti { margin: 0; }
+    .tarih span { display:block; font-size:.85rem; color:#6c757d }
+    .tarih strong { font-size: .95rem; }
+</style>
+
+

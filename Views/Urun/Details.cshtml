@@ -116,10 +116,15 @@
                     @if (Model.StockQuantity > 0)
                     {
                         <div class="d-grid gap-2">
-                            <button class="btn btn-primary btn-lg py-3">
-                                <i class="fas fa-shopping-cart me-2"></i>
-                                Sepete Ekle
-                            </button>
+                            <form asp-controller="Cart" asp-action="Add" method="post">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="urunId" value="@Model.Id" />
+                                <input type="hidden" name="quantity" value="1" />
+                                <button type="submit" class="btn btn-primary btn-lg py-3 w-100">
+                                    <i class="fas fa-shopping-cart me-2"></i>
+                                    Sepete Ekle
+                                </button>
+                            </form>
                             <button class="btn btn-outline-primary py-2">
                                 <i class="fas fa-bolt me-2"></i>
                                 Hemen Al
@@ -465,10 +470,15 @@
                                             </a>
                                             @if (benzerUrun.StockQuantity > 0)
                                             {
-                                                <button class="btn btn-primary btn-sm">
-                                                    <i class="fas fa-shopping-cart me-1"></i>
-                                                    Sepete Ekle
-                                                </button>
+                                                <form asp-controller="Cart" asp-action="Add" method="post" class="m-0">
+                                                    @Html.AntiForgeryToken()
+                                                    <input type="hidden" name="urunId" value="@benzerUrun.Id" />
+                                                    <input type="hidden" name="quantity" value="1" />
+                                                    <button type="submit" class="btn btn-primary btn-sm">
+                                                        <i class="fas fa-shopping-cart me-1"></i>
+                                                        Sepete Ekle
+                                                    </button>
+                                                </form>
                                             }
                                             else
                                             {

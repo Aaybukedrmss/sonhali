@@ -17,6 +17,9 @@ public class DataContext : IdentityDbContext<AppUser, IdentityRole<int>, int>
     public DbSet<Favorite> Favorites { get; set; }
     public DbSet<SupportRequest> SupportRequests { get; set; }
     public DbSet<UserAddress> UserAddresses { get; set; }
+    public DbSet<CartItem> CartItems { get; set; }
+    public DbSet<Order> Orders { get; set; }
+    public DbSet<OrderItem> OrderItems { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -35,5 +38,20 @@ public class DataContext : IdentityDbContext<AppUser, IdentityRole<int>, int>
             .HasIndex(a => new { a.UserId, a.IsDefault })
             .IsUnique()
             .HasFilter("[IsDefault] = 1");
+
+        // Sepet: Kullanıcı-Ürün tekil olsun
+        modelBuilder.Entity<CartItem>()
+            .HasIndex(ci => new { ci.UserId, ci.UrunId })
+            .IsUnique();
+
+        modelBuilder.Entity<Order>()
+            .HasIndex(o => o.OrderNumber)
+            .IsUnique();
+
+        modelBuilder.Entity<OrderItem>()
+            .HasOne(oi => oi.Order)
+            .WithMany()
+            .HasForeignKey(oi => oi.OrderId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

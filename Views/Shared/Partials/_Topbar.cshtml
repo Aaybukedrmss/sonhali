@@ -1,6 +1,7 @@
 @using dotnet_store.Models
 @inject Microsoft.AspNetCore.Identity.SignInManager<AppUser> SignInManager
 @inject Microsoft.AspNetCore.Identity.UserManager<AppUser> UserManager
+@inject dotnet_store.Models.DataContext DataContext
 <section class="top-bar">
             <div class="container">
                 <div class="row gy-2 align-items-center">
@@ -11,11 +12,27 @@
                     <div class="col-lg-5 col-sm-8 col-8 order-lg-last">
                         <div class="d-flex justify-content-end align-items-center gap-2">
 
-                            <a href="#" class="btn btn-outline-primary">
+                            <a asp-controller="Favorite" asp-action="Index" class="btn btn-outline-primary">
                                 <i class="fa fa-heart"></i> <span class="ms-1 d-none d-sm-inline-block">Listem</span>
                             </a>
-                            <a href="shopping-cart.html" class="btn btn-outline-primary ms-1">
-                                <i class="fa fa-shopping-cart"></i> <span class="ms-1 d-none d-sm-inline-block">Sepetim</span>
+                            @{
+                                var cartCount = 0;
+                                if (SignInManager.IsSignedIn(User))
+                                {
+                                    var cu = await UserManager.GetUserAsync(User);
+                                    if (cu != null)
+                                    {
+                                        cartCount = DataContext.CartItems.Count(ci => ci.UserId == cu.Id);
+                                    }
+                                }
+                            }
+                            <a asp-controller="Cart" asp-action="Index" class="btn btn-outline-primary ms-1 d-flex align-items-center">
+                                <i class="fa fa-shopping-cart"></i>
+                                <span class="ms-1 d-none d-sm-inline-block">Sepetim</span>
+                                @if (cartCount > 0)
+                                {
+                                    <span class="badge bg-danger ms-2">@cartCount</span>
+                                }
                             </a>
 
 
@@ -37,7 +54,7 @@
                                 </button>
                                 <ul class="dropdown-menu dropdown-menu-end">
                                     <li><a class="dropdown-item" asp-controller="Profile" asp-action="Index">Profil / Hesap Ayarları</a></li>
-                                    <li><a class="dropdown-item" href="../Siparislerim/Siparislerim.html">Siparişlerim</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Orders" asp-action="Index">Siparişlerim</a></li>
                                     <li><a class="dropdown-item" asp-controller="Favorite" asp-action="Index">Favorilerim</a></li>
                                     <li><a class="dropdown-item" asp-controller="Help" asp-action="Index">Yardım/Şikayet/Öneri</a></li>
                                     @if (SignInManager.IsSignedIn(User))
