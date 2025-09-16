@@ -6,7 +6,10 @@
             <div class="container">
                 <div class="row gy-2 align-items-center">
                     <div class="col-lg-2 col-sm-4 col-4">
-                        <a href="index.html" class="navbar-brand"><i class="fa-solid fa-truck-fast"></i> E-Commerce</a>
+                        <a asp-controller="Home" asp-action="Index" class="navbar-brand d-flex align-items-center" style=" border radius 10px">
+                            <img src="~/KirazCo.png?v=1" alt="KirazCo" class="img-fluid me-2 topbar-logo" />
+                            <span class="d-none d-md-inline topbar-brand-text">KirazCo</span>
+                        </a>
                     </div>
                    
                     <div class="col-lg-5 col-sm-8 col-8 order-lg-last">
@@ -40,7 +43,7 @@
                             {
                                 var currentUser = await UserManager.GetUserAsync(User);
                                 var displayName = string.IsNullOrWhiteSpace(currentUser?.AdSoyad) ? currentUser?.UserName : currentUser!.AdSoyad;
-                                <span class="ms-2 me-1 d-none d-sm-inline-block text-white">Merhaba, @displayName</span>
+                                <span class="ms-2 me-1 d-none d-sm-inline-block color: #f7c7ba">Merhaba, @displayName</span>
                             }
                             else
                             {

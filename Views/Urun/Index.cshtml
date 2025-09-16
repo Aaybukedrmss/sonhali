@@ -1,5 +1,6 @@
 @using dotnet_store.Models
 @model List<Urun>
+@inject dotnet_store.Services.IProductImageService ProductImageService
 
 @{
     ViewData["Title"] = "Ürün Listesi";
@@ -23,6 +24,13 @@
             {
                 <div class="col-md-4 mb-4">
                     <div class="card h-100 shadow-sm">
+                        <div class="product-image-container" style="height: 180px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
+                            @{ var imgUrl = await ProductImageService.GetPrimaryImageUrlByIsbnAsync(item.Isbn); }
+                            @if (!string.IsNullOrWhiteSpace(imgUrl))
+                            {
+                                <img src="@imgUrl" alt="@item.ProductName" style="max-height: 180px; width: 100%; object-fit: contain; display: block;" onerror="this.style.display='none'" />
+                            }
+                        </div>
                         <div class="card-body">
                             <h5 class="card-title">@item.ProductName</h5>
                             <p class="card-text text-muted">@item.Yazar</p>

@@ -18,6 +18,8 @@ builder.Services.AddIdentity<AppUser,IdentityRole<int>>()
     .AddEntityFrameworkStores<DataContext>();
 // Payment services
 builder.Services.AddScoped<IPaymentService, IyzipayPaymentService>();
+// Image services
+builder.Services.AddScoped<IProductImageService, ProductImageService>();
 
 builder.Services.Configure<IdentityOptions>(options =>
 {

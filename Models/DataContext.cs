@@ -20,6 +20,7 @@ public class DataContext : IdentityDbContext<AppUser, IdentityRole<int>, int>
     public DbSet<CartItem> CartItems { get; set; }
     public DbSet<Order> Orders { get; set; }
     public DbSet<OrderItem> OrderItems { get; set; }
+    public DbSet<ResimUrun> ResimUrunler { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -27,6 +28,12 @@ public class DataContext : IdentityDbContext<AppUser, IdentityRole<int>, int>
         
         // Tablo adını ShopCo olarak belirt
         modelBuilder.Entity<Urun>().ToTable("ShopCo");
+
+        // Harici resim tablosu: resimurun (read-only kullanım)
+        modelBuilder.Entity<ResimUrun>().ToTable("resimurun");
+        modelBuilder.Entity<ResimUrun>().Property(r => r.Isbn).HasColumnName("Isbn");
+        modelBuilder.Entity<ResimUrun>().Property(r => r.Url).HasColumnName("Url");
+        modelBuilder.Entity<ResimUrun>().Property(r => r.Images).HasColumnName("images");
 
         // Favoriler için benzersiz kullanıcı-ürün çifti
         modelBuilder.Entity<Favorite>()

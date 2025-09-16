@@ -1051,7 +1051,8 @@ C:\Users\Aybüke\OneDrive\Masaüstü\staj-shopcolist-ndexurunsuzloginokey-main\o
 C:\Users\Aybüke\OneDrive\Masaüstü\staj-shopcolist-ndexurunsuzloginokey-main\obj\Debug\net9.0\rjsmrazor.dswa.cache.json
 C:\Users\Aybüke\OneDrive\Masaüstü\staj-shopcolist-ndexurunsuzloginokey-main\obj\Debug\net9.0\rjsmcshtml.dswa.cache.json
 C:\Users\Aybüke\OneDrive\Masaüstü\staj-shopcolist-ndexurunsuzloginokey-main\obj\Debug\net9.0\scopedcss\bundle\dotnet-store.styles.css
-C:\Users\Aybüke\OneDrive\Masaüstü\staj-shopcolist-ndexurunsuzloginokey-main\obj\Debug\net9.0\compressed\n8ewo50k27-o3dbu4hgzb.gz
+C:\Users\Aybüke\OneDrive\Masaüstü\staj-shopcolist-ndexurunsuzloginokey-main\obj\Debug\net9.0\compressed\n8ewo50k27-7sezca9hiv.gz
+C:\Users\Aybüke\OneDrive\Masaüstü\staj-shopcolist-ndexurunsuzloginokey-main\obj\Debug\net9.0\compressed\1g6igrmttz-7h6y65mix3.gz
 C:\Users\Aybüke\OneDrive\Masaüstü\staj-shopcolist-ndexurunsuzloginokey-main\obj\Debug\net9.0\compressed\0yq11nkej4-szj28caql3.gz
 C:\Users\Aybüke\OneDrive\Masaüstü\staj-shopcolist-ndexurunsuzloginokey-main\obj\Debug\net9.0\compressed\lg1dq1cib4-rinddw3rs2.gz
 C:\Users\Aybüke\OneDrive\Masaüstü\staj-shopcolist-ndexurunsuzloginokey-main\obj\Debug\net9.0\compressed\foxsbxre79-uqdik28yf5.gz
@@ -1069,9 +1070,10 @@ C:\Users\Aybüke\OneDrive\Masaüstü\staj-shopcolist-ndexurunsuzloginokey-main\o
 C:\Users\Aybüke\OneDrive\Masaüstü\staj-shopcolist-ndexurunsuzloginokey-main\obj\Debug\net9.0\compressed\ayea91bfri-bjhga1lsoc.gz
 C:\Users\Aybüke\OneDrive\Masaüstü\staj-shopcolist-ndexurunsuzloginokey-main\obj\Debug\net9.0\compressed\w20gfysnlv-85bkq6sa5w.gz
 C:\Users\Aybüke\OneDrive\Masaüstü\staj-shopcolist-ndexurunsuzloginokey-main\obj\Debug\net9.0\compressed\d0zwof52gp-z14iv85ji6.gz
-C:\Users\Aybüke\OneDrive\Masaüstü\staj-shopcolist-ndexurunsuzloginokey-main\obj\Debug\net9.0\compressed\2v6xp16du8-61n19gt1b8.gz
+C:\Users\Aybüke\OneDrive\Masaüstü\staj-shopcolist-ndexurunsuzloginokey-main\obj\Debug\net9.0\compressed\2v6xp16du8-f2ikcy7hy3.gz
 C:\Users\Aybüke\OneDrive\Masaüstü\staj-shopcolist-ndexurunsuzloginokey-main\obj\Debug\net9.0\compressed\t7hgfmq9h6-f6guyl0605.gz
 C:\Users\Aybüke\OneDrive\Masaüstü\staj-shopcolist-ndexurunsuzloginokey-main\obj\Debug\net9.0\compressed\prp9f1ih76-yrbeainaad.gz
+C:\Users\Aybüke\OneDrive\Masaüstü\staj-shopcolist-ndexurunsuzloginokey-main\obj\Debug\net9.0\compressed\c60m0r5ejl-f2ikcy7hy3.gz
 C:\Users\Aybüke\OneDrive\Masaüstü\staj-shopcolist-ndexurunsuzloginokey-main\obj\Debug\net9.0\compressed\d6xi74t1eo-bqjiyaj88i.gz
 C:\Users\Aybüke\OneDrive\Masaüstü\staj-shopcolist-ndexurunsuzloginokey-main\obj\Debug\net9.0\compressed\bczleuiame-c2jlpeoesf.gz
 C:\Users\Aybüke\OneDrive\Masaüstü\staj-shopcolist-ndexurunsuzloginokey-main\obj\Debug\net9.0\compressed\mowre5qin0-erw9l3u2r3.gz

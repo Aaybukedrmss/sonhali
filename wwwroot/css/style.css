@@ -3,7 +3,7 @@
 }
 
 .border-left-primary {
-    border-left: .25rem solid #4e73df !important;
+    border-left: .25rem solid #b182e6 !important;
 }
 
 .border-left-success {
@@ -20,7 +20,7 @@
 }
 
 :root {
-    --primary: #6610F2;
+    --primary: #d0827c;
 }
 
 .top-bar {
@@ -60,26 +60,26 @@
     border-radius: .35rem;
 }
 .icon-dropdown-menu a:hover {
-    background: rgba(0,0,0,.03);
+    background: rgba(227, 167, 167, 0.03);
 }
 .dropdown-link {
     display: block;
     width: 100%;
     text-align: left;
-    background: transparent;
+    background-color: #f7efe1;
     border: 0;
     padding: .5rem .75rem;
-    color: #212529;
+    color: #8d6472;
     border-radius: .35rem;
 }
 .dropdown-link:hover {
-    background: rgba(0,0,0,.03);
+    background: rgba(194, 132, 132, 0.03);
 }
 
 .btn-light {
     background-color: #fff;
     border-color: #dee2e6;
-    color: #212529;
+    color: #b07b9b;
 }
 
 .bg-primary,

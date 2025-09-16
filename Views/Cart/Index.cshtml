@@ -22,6 +22,14 @@
                     @foreach (var item in Model.Items)
                     {
                         <div class="list-group-item d-flex align-items-center gap-3">
+                            <div style="width:64px;height:64px;flex:0 0 64px;display:flex;align-items:center;justify-content:center;background:var(--surface);border:1px solid #f7c7ba;border-radius:6px;">
+                                @inject dotnet_store.Services.IProductImageService ImgSvc
+                                @{ var img = await ImgSvc.GetPrimaryImageUrlByIsbnAsync(item.Urun!.Isbn); }
+                                @if (!string.IsNullOrWhiteSpace(img))
+                                {
+                                    <img src="@img" alt="@item.Urun!.ProductName" style="max-width:100%;max-height:100%;object-fit:contain;" />
+                                }
+                            </div>
                             <div class="flex-fill">
                                 <div class="fw-bold">@item.Urun!.ProductName</div>
                                 <div class="text-muted small">Birim fiyat: @item.UnitPrice.ToString("C")</div>

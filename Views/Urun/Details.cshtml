@@ -2,6 +2,7 @@
 @inject dotnet_store.Models.DataContext DataContext
 @inject Microsoft.AspNetCore.Identity.SignInManager<dotnet_store.Models.AppUser> SignInManager
 @inject Microsoft.AspNetCore.Identity.UserManager<dotnet_store.Models.AppUser> UserManager
+@inject dotnet_store.Services.IProductImageService ProductImageService
 
 @{
     ViewData["Title"] = Model.ProductName;
@@ -28,18 +29,16 @@
             <div class="card border-0 shadow-sm">
                 <div class="card-body p-0">
                     <div class="product-gallery">
-                        <!-- Ana ürün görseli için placeholder -->
                         <div class="main-image-container text-center p-4" style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
-                            <div class="product-image-placeholder d-flex align-items-center justify-content-center" style="height: 400px;">
-                                <div class="text-center">
-                                    <i class="fas fa-book fa-4x text-muted mb-3"></i>
-                                    <p class="text-muted">Ürün Görseli</p>
-                                </div>
-                            </div>
+                            @{ var detailImgUrl = await ProductImageService.GetPrimaryImageUrlByIsbnAsync(Model.Isbn); }
+                            @if (!string.IsNullOrWhiteSpace(detailImgUrl))
+                            {
+                                <img src="@detailImgUrl" alt="@Model.ProductName" style="max-height: 400px; width: 100%; object-fit: contain; display: block; margin: 0 auto;" onerror="this.style.display='none'" />
+                            }
                         </div>
                         
                         <!-- Küçük görseller -->
-                        <div class="thumbnail-images d-flex justify-content-center gap-2 p-3 border-top">
+                        <div class="thumbnail-images d-flex justify-content-center gap-2 p-3 border-top d-none">
                             <div class="thumbnail-item active" style="width: 80px; height: 80px; background: #f8f9fa; border: 2px solid #007bff; border-radius: 8px; cursor: pointer;"></div>
                             <div class="thumbnail-item" style="width: 80px; height: 80px; background: #f8f9fa; border: 2px solid #dee2e6; border-radius: 8px; cursor: pointer;"></div>
                             <div class="thumbnail-item" style="width: 80px; height: 80px; background: #f8f9fa; border: 2px solid #dee2e6; border-radius: 8px; cursor: pointer;"></div>
@@ -58,14 +57,6 @@
                 <div class="mb-3">
                     <span class="badge bg-primary me-2 px-3 py-2">@Model.Marka</span>
                     <span class="badge bg-info me-2 px-3 py-2">@Model.MedyaTipi</span>
-                    @if (Model.Aktif == 0)
-                    {
-                        <span class="badge bg-success px-3 py-2"><i class="fas fa-check-circle me-1"></i>Aktif</span>
-                    }
-                    else
-                    {
-                        <span class="badge bg-danger px-3 py-2"><i class="fas fa-times-circle me-1"></i>Pasif</span>
-                    }
                 </div>
 
                 <!-- Fiyat ve Stok Durumu -->
@@ -98,7 +89,7 @@
                         {
                             <p class="text-success mb-0">
                                 <i class="fas fa-check-circle me-2"></i>
-                                <strong>Stokta mevcut</strong> - @Model.StockQuantity adet
+                                <strong>Stokta mevcut</strong>
                             </p>
                         }
                         else
@@ -160,14 +151,14 @@
                         <form asp-controller="Favorite" asp-action="Toggle" method="post" class="flex-fill">
                             @Html.AntiForgeryToken()
                             <input type="hidden" name="urunId" value="@Model.Id" />
-                            <button type="submit" class="btn btn-outline-danger w-100">
+                            <button type="submit" class="btn btn-outline-primary w-100">
                                 @if (isFavMain)
                                 {
-                                    <i class="fas fa-heart me-2 text-danger"></i><span>Favorilerde</span>
+                                    <i class="fas fa-heart me-2 text-primary"></i><span>Favorilerde</span>
                                 }
                                 else
                                 {
-                                    <i class="far fa-heart me-2"></i><span>Favorilere Ekle</span>
+                                    <i class="far fa-heart me-2 text-primary"></i><span>Favorilere Ekle</span>
                                 }
                             </button>
                         </form>
@@ -366,11 +357,12 @@
                         <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 mb-4">
                             <div class="card h-100 border-0 shadow-sm product-card">
                                 <div class="position-relative">
-                                    <!-- Ürün Görseli -->
                                     <div class="product-image-container" style="height: 200px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
-                                        <div class="d-flex align-items-center justify-content-center h-100">
-                                            <i class="fas fa-book fa-3x text-muted"></i>
-                                        </div>
+                                        @{ var simg = await ProductImageService.GetPrimaryImageUrlByIsbnAsync(benzerUrun.Isbn); }
+                                        @if (!string.IsNullOrWhiteSpace(simg))
+                                        {
+                                            <img src="@simg" alt="@benzerUrun.ProductName" style="max-height: 200px; width: 100%; object-fit: contain; display: block;" onerror="this.style.display='none'" />
+                                        }
                                     </div>
                                     
                                     <!-- Badge'ler -->
@@ -529,18 +521,19 @@
     
     .nav-tabs .nav-link {
         border: none;
-        color: #6c757d;
+        color: #3c2323;
         font-weight: 500;
     }
     
     .nav-tabs .nav-link.active {
-        color: #007bff;
+        color: #f7c7ba;
         background: none;
-        border-bottom: 3px solid #007bff;
+        border-bottom: 3px solid #f7c7ba;
     }
     
     .card {
         transition: all 0.3s ease;
+        border: 1px solid #f7c7ba;
     }
     
     .card:hover {
