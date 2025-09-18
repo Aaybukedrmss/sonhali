@@ -1,0 +1,50 @@
+@model IEnumerable<dotnet_store.Models.Urun>
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<section class="container my-4">
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+    }
+    <div class="d-flex justify-content-between align-items-center">
+        <h2>Ürünler</h2>
+        <a asp-controller="AdminProducts" asp-action="Create" class="btn btn-primary">Yeni Ürün</a>
+    </div>
+    <table class="table table-striped mt-3">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Ad</th>
+                <th>Fiyat</th>
+                <th>Aktif</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var p in Model)
+            {
+                <tr>
+                    <td>@p.Id</td>
+                    <td>@p.ProductName</td>
+                    <td>@p.Fiyat</td>
+                    <td>@(p.Aktif == 1 ? "Evet" : "Hayır")</td>
+                    <td class="text-end">
+                        <a asp-controller="AdminProducts" asp-action="Edit" asp-route-id="@p.Id" class="btn btn-sm btn-outline-primary">Düzenle</a>
+                        <form asp-controller="AdminProducts" asp-action="Delete" asp-route-id="@p.Id" method="post" class="d-inline">
+                            @Html.AntiForgeryToken()
+                            <button class="btn btn-sm btn-outline-danger" onclick="return confirm('Silinsin mi?')">Sil</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</section>
+
+

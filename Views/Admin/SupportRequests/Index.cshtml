@@ -1,0 +1,79 @@
+@model List<dotnet_store.Models.SupportRequest>
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var filterType = ViewData["FilterType"] as string;
+}
+
+<h2>Destek Talepleri</h2>
+
+<div class="mb-3">
+    <form method="get" class="form-inline">
+        <label class="mr-2">Tür:</label>
+        <select name="type" class="form-control mr-2" onchange="this.form.submit()">
+@if (string.IsNullOrEmpty(filterType)) {
+            <option value="" selected="selected">Hepsi</option>
+} else {
+            <option value="">Hepsi</option>
+}
+@if (filterType == "Yardim") {
+            <option value="Yardim" selected="selected">Yardım</option>
+} else {
+            <option value="Yardim">Yardım</option>
+}
+@if (filterType == "Sikayet") {
+            <option value="Sikayet" selected="selected">Şikayet</option>
+} else {
+            <option value="Sikayet">Şikayet</option>
+}
+@if (filterType == "Oneri") {
+            <option value="Oneri" selected="selected">Öneri</option>
+} else {
+            <option value="Oneri">Öneri</option>
+}
+        </select>
+        <noscript>
+            <button type="submit" class="btn btn-primary">Filtrele</button>
+        </noscript>
+    </form>
+    @if(TempData["SuccessMessage"] != null){<div class="alert alert-success mt-2">@TempData["SuccessMessage"]</div>}
+    @if(TempData["ErrorMessage"] != null){<div class="alert alert-danger mt-2">@TempData["ErrorMessage"]</div>}
+    @if(!Model.Any()){
+        <div class="alert alert-info mt-3">Kayıt bulunamadı.</div>
+    }
+</div>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Tarih</th>
+            <th>Tür</th>
+            <th>E-posta</th>
+            <th>Kullanıcı</th>
+            <th>Mesaj</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>@item.Id</td>
+            <td>@item.CreatedAt.ToLocalTime().ToString("g")</td>
+            <td>@item.Type</td>
+            <td>@item.Email</td>
+            <td>@(item.User != null ? item.User.UserName : "-")</td>
+            <td>@(item.Message.Length > 60 ? item.Message.Substring(0,60) + "..." : item.Message)</td>
+            <td class="text-right">
+                <a class="btn btn-sm btn-secondary" href="/admin/support/@item.Id">Görüntüle</a>
+                <form method="post" action="/admin/support/delete/@item.Id" style="display:inline" onsubmit="return confirm('Silmek istiyor musunuz?')">
+                    @Html.AntiForgeryToken()
+                    <button class="btn btn-sm btn-danger" type="submit">Sil</button>
+                </form>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
+
+

@@ -6,10 +6,12 @@
             <div class="container">
                 <div class="row gy-2 align-items-center">
                     <div class="col-lg-2 col-sm-4 col-4">
-                        <a asp-controller="Home" asp-action="Index" class="navbar-brand d-flex align-items-center" style=" border radius 10px">
-                            <img src="~/KirazCo.png?v=1" alt="KirazCo" class="img-fluid me-2 topbar-logo" />
-                            <span class="d-none d-md-inline topbar-brand-text">KirazCo</span>
-                        </a>
+                        <div class="navbar-brand d-flex align-items-center" style=" border radius 10px">
+                            <a asp-controller="HiddenAdmin" asp-action="Index" class="d-inline-block">
+                                <img src="~/KirazCo.png?v=1" alt="KirazCo" class="img-fluid me-2 topbar-logo" />
+                            </a>
+                            <a asp-controller="Home" asp-action="Index" class="d-none d-md-inline topbar-brand-text text-decoration-none text-primary">KirazCo</a>
+                        </div>
                     </div>
                    
                     <div class="col-lg-5 col-sm-8 col-8 order-lg-last">
@@ -48,7 +50,7 @@
                             else
                             {
                                 <a asp-controller="Account" asp-action="Login" class="btn btn-outline-primary">Giriş</a>
-                                <a asp-controller="Account" asp-action="Create" class="btn btn-primary ms-1">Kayıt Ol</a>
+                                <a asp-controller="Account" asp-action="Create" class="btn btn-outline-primary ms-1">Kayıt Ol</a>
                             }
 
                             <div class="dropdown ms-2">
@@ -60,6 +62,24 @@
                                     <li><a class="dropdown-item" asp-controller="Orders" asp-action="Index">Siparişlerim</a></li>
                                     <li><a class="dropdown-item" asp-controller="Favorite" asp-action="Index">Favorilerim</a></li>
                                     <li><a class="dropdown-item" asp-controller="Help" asp-action="Index">Yardım/Şikayet/Öneri</a></li>
+                                    @if (SignInManager.IsSignedIn(User))
+                                    {
+                                        var au = await UserManager.GetUserAsync(User);
+                                        var isAdmin = au != null && await UserManager.IsInRoleAsync(au, "Admin");
+                                        if (isAdmin)
+                                        {
+                                            <li><hr class="dropdown-divider" /></li>
+                                            <li class="dropdown-header">Yönetim</li>
+                                            <li><a class="dropdown-item" href="/admin">Yönetim Ana Sayfa</a></li>
+                                            <li><a class="dropdown-item" href="/admin/orders">Siparişler</a></li>
+                                            <li><a class="dropdown-item" href="/admin/sliders">Slider Yönetimi</a></li>
+                                            <li><a class="dropdown-item" href="/admin/categories">Kategoriler</a></li>
+                                            <li><a class="dropdown-item" href="/admin/products">Ürünler</a></li>
+                                            <li><a class="dropdown-item" href="/admin/roles">Rol Yönetimi</a></li>
+                                            <li><a class="dropdown-item" href="/admin/settings">Site Ayarları</a></li>
+                                            <li><a class="dropdown-item" href="/admin/support">Destek Talepleri</a></li>
+                                        }
+                                    }
                                     @if (SignInManager.IsSignedIn(User))
                                     {
                                         <li>
@@ -79,10 +99,10 @@
                         </div>
                     </div>
                     <div class="col-lg-5">
-                        <form>
+                        <form method="get" action="@Url.Action("List","Urun")">
                             <div class="input-group">
-                                <input type="text" placeholder="Anahtar kelime" class="form-control">
-                                <button class="btn btn-primary"><i class="fa fa-search"></i></button>
+                                <input type="text" name="q" value="@Context.Request.Query["q"]" placeholder="Ürün, yazar, yayınevi, marka..." class="form-control">
+                                <button class="btn btn-primary" type="submit"><i class="fa fa-search"></i></button>
                             </div>
                         </form>
                     </div>

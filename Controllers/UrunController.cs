@@ -61,12 +61,26 @@ public class UrunController : Controller
         }
     }
 
-    public async Task<ActionResult> List(string? kategori, string? yayinevi, string? yazar, string? marka, 
+    public async Task<ActionResult> List(string? q, string? kategori, string? yayinevi, string? yazar, string? marka, 
         double? minFiyat, double? maxFiyat, double? minRating)
     {
         try
         {
             var query = _context.Urunler.AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(q))
+            {
+                query = query.Where(u =>
+                    u.ProductName.Contains(q) ||
+                    u.Yazar.Contains(q) ||
+                    u.Yayinevi.Contains(q) ||
+                    u.Marka.Contains(q) ||
+                    u.TopMostCategoryNames.Contains(q) ||
+                    u.Isbn.ToString().Contains(q) ||
+                    u.Sku.ToString().Contains(q)
+                );
+                ViewBag.Query = q;
+            }
 
             // Filtreleri uygula
             if (!string.IsNullOrEmpty(kategori))

@@ -20,6 +20,7 @@
 
     <header>
         @await Html.PartialAsync("Partials/_Topbar")
+        @await Html.PartialAsync("Partials/_Navbar")
         @RenderSection("Bar", required: false)
         
 
@@ -29,10 +30,19 @@
         @RenderBody()
     </main>
 
+    <!-- Global anti-forgery token for AJAX requests (e.g., favorite toggles) -->
+    <form method="post" style="display:none">
+        @Html.AntiForgeryToken()
+        <input type="hidden" value="1" />
+    </form>
+
 
     @await Html.PartialAsync("Partials/_Footer")
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+    <script>
+        console.log('Layout script çalışıyor');
+    </script>
     <script src="~/js/site.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>

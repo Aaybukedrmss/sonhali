@@ -1,0 +1,19 @@
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<section class="container my-4">
+    <h2>Admin Kurulumu</h2>
+    <p>Önce normal kullanıcı olarak giriş yapın. Ardından aşağıdaki butona basarak kendinizi Admin yapın.</p>
+    <form asp-controller="AdminSetup" asp-action="MakeMeAdmin" method="post">
+        @Html.AntiForgeryToken()
+        <button type="submit" class="btn btn-danger">Beni Admin Yap</button>
+    </form>
+    <hr />
+    <p>Admin olduktan sonra yönetim paneline <a href="/admin">/admin</a> adresinden girin.</p>
+    <p>Giriş sayfası: <a href="/Account/Login">/Account/Login</a></p>
+    <p>Hesabınız yoksa: <a href="/Account/Create">/Account/Create</a></p>
+    
+</section>
+
+

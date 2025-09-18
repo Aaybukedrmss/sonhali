@@ -3,9 +3,7 @@
  ViewData["Title"] = "Anasayfa";
 }
 
-@section Bar{
-    @await Html.PartialAsync("Partials/_Navbar")
-}
+@* Navbar artık layout içinde render ediliyor; tekrar etmeyelim *@
 
 @if (ViewBag.Error != null)
 {
@@ -20,7 +18,7 @@ else
         <div class="container">
             <div class="card">
                 <div class="row p-1 p-lg-2 gx-2">
-                    <div class="col-lg-3 d-none d-lg-block">
+                    <div class="col-12 col-md-4 col-lg-3">
                         @await Html.PartialAsync("Partials/_Menu")
                     </div>
                     <div class="col-lg-9">
@@ -37,18 +35,10 @@ else
 
             @if (Model != null && Model.Count > 0)
             {
-                <div class="row g-2">
-                    @for (int i = 0; i < Math.Min(Model.Count, 4); i++)
+                <div class="row">
+                    @for (int i = 0; i < Math.Min(Model.Count, 8); i++)
                     {
-                        <div class="col-6 col-lg-3">
-                            @await Html.PartialAsync("Partials/_UrunCard", Model[i])
-                        </div>
-                    }
-                </div>
-                <div class="row g-2 mt-2">
-                    @for (int i = 4; i < Math.Min(Model.Count, 8); i++)
-                    {
-                        <div class="col-6 col-lg-3">
+                        <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 mb-4">
                             @await Html.PartialAsync("Partials/_UrunCard", Model[i])
                         </div>
                     }

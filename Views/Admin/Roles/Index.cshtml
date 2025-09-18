@@ -1,0 +1,51 @@
+@model IEnumerable<Microsoft.AspNetCore.Identity.IdentityRole<int>>
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<section class="container my-4">
+    <h2>Rol Yönetimi</h2>
+
+    <div class="card mt-3">
+        <div class="card-body">
+            <form asp-action="Create" asp-controller="AdminRoles" method="post" class="row g-2">
+                <div class="col-auto">
+                    <input name="name" class="form-control" placeholder="Yeni rol adı (örn: Admin)" />
+                </div>
+                <div class="col-auto">
+                    <button class="btn btn-primary" type="submit">Rol Oluştur</button>
+                </div>
+                @Html.AntiForgeryToken()
+            </form>
+        </div>
+    </div>
+
+    <h5 class="mt-4">Mevcut Roller</h5>
+    <ul class="list-group">
+        @foreach (var r in Model)
+        {
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <span>@r.Name</span>
+            </li>
+        }
+    </ul>
+
+    <div class="card mt-4">
+        <div class="card-body">
+            <form asp-action="Assign" asp-controller="AdminRoles" method="post" class="row g-2">
+                <div class="col-md-4">
+                    <input name="usernameOrEmail" class="form-control" placeholder="Kullanıcı adı veya e-posta" />
+                </div>
+                <div class="col-md-3">
+                    <input name="role" class="form-control" placeholder="Rol adı" />
+                </div>
+                <div class="col-auto">
+                    <button class="btn btn-success" type="submit">Rol Ata</button>
+                </div>
+                @Html.AntiForgeryToken()
+            </form>
+        </div>
+    </div>
+</section>
+
+

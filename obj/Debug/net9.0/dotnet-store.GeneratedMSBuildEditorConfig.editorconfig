@@ -48,8 +48,84 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxSZXNldFBhc3N3b3JkLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/Aybüke/OneDrive/Masaüstü/staj-shopcolist-ndexurunsuzloginokey-main/Views/Admin/Categories/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cQ2F0ZWdvcmllc1xDcmVhdGUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Aybüke/OneDrive/Masaüstü/staj-shopcolist-ndexurunsuzloginokey-main/Views/Admin/Categories/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cQ2F0ZWdvcmllc1xFZGl0LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Aybüke/OneDrive/Masaüstü/staj-shopcolist-ndexurunsuzloginokey-main/Views/Admin/Categories/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cQ2F0ZWdvcmllc1xJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Aybüke/OneDrive/Masaüstü/staj-shopcolist-ndexurunsuzloginokey-main/Views/Admin/Dashboard/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cRGFzaGJvYXJkXEluZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Aybüke/OneDrive/Masaüstü/staj-shopcolist-ndexurunsuzloginokey-main/Views/Admin/HiddenAdmin/Done.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cSGlkZGVuQWRtaW5cRG9uZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Aybüke/OneDrive/Masaüstü/staj-shopcolist-ndexurunsuzloginokey-main/Views/Admin/HiddenAdmin/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cSGlkZGVuQWRtaW5cSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/Aybüke/OneDrive/Masaüstü/staj-shopcolist-ndexurunsuzloginokey-main/Views/Admin/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Aybüke/OneDrive/Masaüstü/staj-shopcolist-ndexurunsuzloginokey-main/Views/Admin/Orders/Details.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cT3JkZXJzXERldGFpbHMuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Aybüke/OneDrive/Masaüstü/staj-shopcolist-ndexurunsuzloginokey-main/Views/Admin/Orders/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cT3JkZXJzXEluZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Aybüke/OneDrive/Masaüstü/staj-shopcolist-ndexurunsuzloginokey-main/Views/Admin/Products/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cUHJvZHVjdHNcQ3JlYXRlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Aybüke/OneDrive/Masaüstü/staj-shopcolist-ndexurunsuzloginokey-main/Views/Admin/Products/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cUHJvZHVjdHNcRWRpdC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Aybüke/OneDrive/Masaüstü/staj-shopcolist-ndexurunsuzloginokey-main/Views/Admin/Products/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cUHJvZHVjdHNcSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Aybüke/OneDrive/Masaüstü/staj-shopcolist-ndexurunsuzloginokey-main/Views/Admin/Roles/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cUm9sZXNcSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Aybüke/OneDrive/Masaüstü/staj-shopcolist-ndexurunsuzloginokey-main/Views/Admin/Settings/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cU2V0dGluZ3NcSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Aybüke/OneDrive/Masaüstü/staj-shopcolist-ndexurunsuzloginokey-main/Views/Admin/Setup/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cU2V0dXBcSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Aybüke/OneDrive/Masaüstü/staj-shopcolist-ndexurunsuzloginokey-main/Views/Admin/Sliders/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cU2xpZGVyc1xDcmVhdGUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Aybüke/OneDrive/Masaüstü/staj-shopcolist-ndexurunsuzloginokey-main/Views/Admin/Sliders/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cU2xpZGVyc1xFZGl0LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Aybüke/OneDrive/Masaüstü/staj-shopcolist-ndexurunsuzloginokey-main/Views/Admin/Sliders/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cU2xpZGVyc1xJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Aybüke/OneDrive/Masaüstü/staj-shopcolist-ndexurunsuzloginokey-main/Views/Admin/SupportRequests/Details.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cU3VwcG9ydFJlcXVlc3RzXERldGFpbHMuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Aybüke/OneDrive/Masaüstü/staj-shopcolist-ndexurunsuzloginokey-main/Views/Admin/SupportRequests/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cU3VwcG9ydFJlcXVlc3RzXEluZGV4LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/Aybüke/OneDrive/Masaüstü/staj-shopcolist-ndexurunsuzloginokey-main/Views/Cart/Checkout.cshtml]

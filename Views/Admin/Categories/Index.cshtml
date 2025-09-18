@@ -1,0 +1,41 @@
+@model IEnumerable<dotnet_store.Models.Kategori>
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<section class="container my-4">
+    <div class="d-flex justify-content-between align-items-center">
+        <h2>Kategoriler</h2>
+        <a asp-controller="AdminCategories" asp-action="Create" class="btn btn-primary">Yeni Kategori</a>
+    </div>
+
+    <table class="table table-striped mt-3">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Adı</th>
+                <th>URL</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var k in Model)
+            {
+                <tr>
+                    <td>@k.Id</td>
+                    <td>@k.KategoriAdi</td>
+                    <td>@k.Url</td>
+                    <td class="text-end">
+                        <a asp-controller="AdminCategories" asp-action="Edit" asp-route-id="@k.Id" class="btn btn-sm btn-outline-primary">Düzenle</a>
+                        <form asp-controller="AdminCategories" asp-action="Delete" asp-route-id="@k.Id" method="post" class="d-inline">
+                            @Html.AntiForgeryToken()
+                            <button class="btn btn-sm btn-outline-danger" onclick="return confirm('Silinsin mi?')">Sil</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</section>
+
+

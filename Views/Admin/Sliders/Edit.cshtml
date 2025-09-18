@@ -1,0 +1,44 @@
+@model dotnet_store.Models.SliderEditModel
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<section class="container my-4">
+    <h2>Slider Düzenle</h2>
+    <form asp-controller="AdminSliders" asp-action="Edit" method="post" enctype="multipart/form-data" class="row g-3">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="Id" />
+        <div class="col-md-6">
+            <label class="form-label">Başlık</label>
+            <input asp-for="Baslik" class="form-control" />
+        </div>
+        <div class="col-md-12">
+            <label class="form-label">Açıklama</label>
+            <textarea asp-for="Aciklama" class="form-control"></textarea>
+        </div>
+        <div class="col-md-6">
+            <label class="form-label">Yeni Resim</label>
+            <input asp-for="Resim" type="file" class="form-control" />
+            @if (!string.IsNullOrWhiteSpace(Model.ResimAdi))
+            {
+                <div class="mt-2">
+                    <img src="~/@Model.ResimAdi" alt="resim" style="height:64px" />
+                </div>
+            }
+        </div>
+        <div class="col-md-3">
+            <label class="form-label">Index</label>
+            <input asp-for="Index" class="form-control" />
+        </div>
+        <div class="col-md-3 form-check mt-4">
+            <input asp-for="Aktif" class="form-check-input" />
+            <label class="form-check-label">Aktif</label>
+        </div>
+        <div class="col-12">
+            <button class="btn btn-primary" type="submit">Kaydet</button>
+            <a asp-controller="AdminSliders" asp-action="Index" class="btn btn-secondary">Geri</a>
+        </div>
+    </form>
+</section>
+
+

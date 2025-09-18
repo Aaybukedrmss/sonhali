@@ -1,0 +1,20 @@
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<section class="container my-4">
+    <h2>Admin Erişim</h2>
+    <p>E-postanızı girin. Size geçici bir admin şifresi üretilecek ve e-posta ile gönderilecek. SMTP ayarsızsa şifre ekranda gösterilir.</p>
+    <form asp-controller="HiddenAdmin" asp-action="Generate" method="post" class="row g-3">
+        @Html.AntiForgeryToken()
+        <div class="col-md-6">
+            <label class="form-label">E-posta</label>
+            <input name="email" type="email" class="form-control" required />
+        </div>
+        <div class="col-12">
+            <button class="btn btn-primary" type="submit">Şifre Oluştur</button>
+        </div>
+    </form>
+</section>
+
+

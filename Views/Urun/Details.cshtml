@@ -8,10 +8,15 @@
     ViewData["Title"] = Model.ProductName;
 }
 
+<!-- Global anti-forgery token for AJAX (used by favorite toggle) -->
+<form method="post" style="display:none">
+    @Html.AntiForgeryToken()
+    <input type="hidden" value="1" />
+    <!-- keep at least one input to ensure hidden input renders consistently across browsers -->
+    <!-- end hidden af token form -->
+    </form>
 
-@section Bar{
-    @await Html.PartialAsync("Partials/_Navbar")
-}
+
 <div class="container-fluid py-5">
     <!-- Breadcrumb -->
     <nav aria-label="breadcrumb" class="mb-4">
@@ -136,7 +141,7 @@
                         </div>
                     }
                     
-                    <div class="d-flex gap-2 mt-3">
+                    <div class="action-buttons">
                         @{ 
                             var isFavMain = false; 
                             if (SignInManager.IsSignedIn(User))
@@ -148,21 +153,28 @@
                                 }
                             }
                         }
-                        <form asp-controller="Favorite" asp-action="Toggle" method="post" class="flex-fill">
-                            @Html.AntiForgeryToken()
-                            <input type="hidden" name="urunId" value="@Model.Id" />
-                            <button type="submit" class="btn btn-outline-primary w-100">
+                        
+                        @if (SignInManager.IsSignedIn(User))
+                        {
+                            <button type="button" class="btn btn-outline-primary btn-fav-toggle @(isFavMain ? "favorite-active" : "")" data-urun-id="@Model.Id">
                                 @if (isFavMain)
                                 {
-                                    <i class="fas fa-heart me-2 text-primary"></i><span>Favorilerde</span>
+                                    <i class="fas fa-heart me-2"></i><span>Favorilerde</span>
                                 }
                                 else
                                 {
-                                    <i class="far fa-heart me-2 text-primary"></i><span>Favorilere Ekle</span>
+                                    <i class="far fa-heart me-2"></i><span>Favorilere Ekle</span>
                                 }
                             </button>
-                        </form>
-                        <button class="btn btn-outline-info flex-fill">
+                        }
+                        else
+                        {
+                            <a href="/Account/Login" class="btn btn-outline-primary">
+                                <i class="far fa-heart me-2"></i><span>Favorilere Ekle</span>
+                            </a>
+                        }
+                        
+                        <button class="btn btn-outline-info">
                             <i class="fas fa-share-alt me-2"></i>
                             Paylaş
                         </button>
@@ -355,134 +367,7 @@
                     @foreach (var benzerUrun in (List<dotnet_store.Models.Urun>)ViewBag.BenzerUrunler)
                     {
                         <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 mb-4">
-                            <div class="card h-100 border-0 shadow-sm product-card">
-                                <div class="position-relative">
-                                    <div class="product-image-container" style="height: 200px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
-                                        @{ var simg = await ProductImageService.GetPrimaryImageUrlByIsbnAsync(benzerUrun.Isbn); }
-                                        @if (!string.IsNullOrWhiteSpace(simg))
-                                        {
-                                            <img src="@simg" alt="@benzerUrun.ProductName" style="max-height: 200px; width: 100%; object-fit: contain; display: block;" onerror="this.style.display='none'" />
-                                        }
-                                    </div>
-                                    
-                                    <!-- Badge'ler -->
-                                    <div class="position-absolute top-0 start-0 p-2">
-                                        @if (benzerUrun.Aktif == 1)
-                                        {
-                                            <span class="badge bg-success">Aktif</span>
-                                        }
-                                        else
-                                        {
-                                            <span class="badge bg-secondary">Pasif</span>
-                                        }
-                                    </div>
-                                    
-                                    <!-- Favori Butonu -->
-                                    <div class="position-absolute top-0 end-0 p-2">
-                                        @{ 
-                                            var isFavSimilar = false; 
-                                            if (SignInManager.IsSignedIn(User))
-                                            {
-                                                var cu = await UserManager.GetUserAsync(User);
-                                                if (cu != null)
-                                                {
-                                                    isFavSimilar = DataContext.Favorites.Any(f => f.UserId == cu.Id && f.UrunId == benzerUrun.Id);
-                                                }
-                                            }
-                                        }
-                                        <button type="button" class="btn btn-light btn-sm rounded-circle shadow-sm btn-fav-toggle @(isFavSimilar ? "favorite-active" : "")" data-urun-id="@benzerUrun.Id" title="Favorilere ekle/çıkar">
-                                            @if (isFavSimilar)
-                                            {
-                                                <i class="fas fa-heart text-danger"></i>
-                                            }
-        							else
-                                            {
-                                                <i class="far fa-heart text-muted"></i>
-                                            }
-                                        </button>
-                                    </div>
-                                </div>
-
-                                <div class="card-body d-flex flex-column">
-                                    <!-- Ürün Bilgileri -->
-                                    <div class="mb-2">
-                                        <h6 class="card-title fw-bold text-dark mb-1">
-                                            <a href="@Url.Action("Details", new { id = benzerUrun.Id })" class="text-decoration-none text-dark">
-                                                @benzerUrun.ProductName
-                                            </a>
-                                        </h6>
-                                        <p class="text-muted small mb-1">@benzerUrun.Yazar</p>
-                                        <p class="text-muted small mb-2">@benzerUrun.Yayinevi</p>
-                                    </div>
-
-                                    <!-- Kategori ve Marka -->
-                                    <div class="mb-3">
-                                        <span class="badge bg-primary me-1">@benzerUrun.Marka</span>
-                                        <span class="badge bg-info">@benzerUrun.MedyaTipi</span>
-                                    </div>
-
-                                    <!-- Fiyat ve Stok -->
-                                    <div class="mt-auto">
-                                        <div class="d-flex justify-content-between align-items-center mb-2">
-                                            <h5 class="text-success fw-bold mb-0">@benzerUrun.Fiyat.ToString("C")</h5>
-                                            <small class="text-muted">
-                                                <i class="fas fa-box me-1"></i>
-                                                @benzerUrun.StockQuantity adet
-                                            </small>
-                                        </div>
-                                        
-                                        <!-- Değerlendirme -->
-                                        @if (benzerUrun.TotalRating > 0)
-                                        {
-                                            <div class="mb-3">
-                                                <div class="d-flex align-items-center">
-                                                    <div class="stars me-2">
-                                                        @for (int i = 1; i <= 5; i++)
-                                                        {
-                                                            if (i <= benzerUrun.TotalRating)
-                                                            {
-                                                                <i class="fas fa-star text-warning" style="font-size: 0.8rem;"></i>
-                                                            }
-                                                            else
-                                                            {
-                                                                <i class="far fa-star text-warning" style="font-size: 0.8rem;"></i>
-                                                            }
-                                                        }
-                                                    </div>
-                                                    <small class="text-muted">(@benzerUrun.TotalRating.ToString("F1"))</small>
-                                                </div>
-                                            </div>
-                                        }
-
-                                        <!-- Aksiyon Butonları -->
-                                        <div class="d-grid gap-2">
-                                            <a href="@Url.Action("Details", new { id = benzerUrun.Id })" class="btn btn-outline-primary btn-sm">
-                                                <i class="fas fa-eye me-1"></i>
-                                                Detayları Gör
-                                            </a>
-                                            @if (benzerUrun.StockQuantity > 0)
-                                            {
-                                                <form asp-controller="Cart" asp-action="Add" method="post" class="m-0">
-                                                    @Html.AntiForgeryToken()
-                                                    <input type="hidden" name="urunId" value="@benzerUrun.Id" />
-                                                    <input type="hidden" name="quantity" value="1" />
-                                                    <button type="submit" class="btn btn-primary btn-sm">
-                                                        <i class="fas fa-shopping-cart me-1"></i>
-                                                        Sepete Ekle
-                                                    </button>
-                                                </form>
-                                            }
-                                            else
-                                            {
-                                                <button class="btn btn-secondary btn-sm" disabled>
-                                                    <i class="fas fa-times me-1"></i>
-                                                    Stokta Yok
-                                                </button>
-                                            }
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            @await Html.PartialAsync("Partials/_UrunCard", benzerUrun)
                         </div>
                     }
                 </div>
@@ -531,12 +416,13 @@
         border-bottom: 3px solid #f7c7ba;
     }
     
-    .card {
+    /* Move generic card styling to global and scope to product cards */
+    .product-card {
         transition: all 0.3s ease;
         border: 1px solid #f7c7ba;
     }
     
-    .card:hover {
+    .product-card:hover {
         transform: translateY(-5px);
     }
     
@@ -546,6 +432,45 @@
     
     .btn:hover {
         transform: translateY(-1px);
+    }
+    
+    .favorite-active {
+        background-color: #dc3545 !important;
+        color: white !important;
+        border-color: #dc3545 !important;
+    }
+    
+    .favorite-active:hover {
+        background-color: #c82333 !important;
+        border-color: #bd2130 !important;
+    }
+    
+    /* Favorileme ve Paylaş butonları için özel düzenleme */
+    .action-buttons {
+        display: flex;
+        gap: 12px;
+        margin-top: 1rem;
+    }
+    
+    .action-buttons .btn {
+        flex: 1 1 50%;
+        min-height: 45px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        width: 50%;
+        max-width: none;
+    }
+    
+    /* Favori butonu ve paylaş butonunun aynı genişlikte olması için */
+    .action-buttons .btn-fav-toggle,
+    .action-buttons .btn-outline-info {
+        flex: 1 1 50%;
+        width: 50%;
+    }
+    
+    .action-buttons .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.15);
     }
 </style>
 
@@ -562,6 +487,40 @@
             this.style.borderColor = '#007bff';
         });
     });
+
+    // Favorileme butonu test - Global sistem tarafından yönetiliyor
+    console.log('Detail sayfası script çalışıyor');
+    const favBtn = document.querySelector('.btn-fav-toggle');
+    if (favBtn) {
+        console.log('Favori butonu bulundu:', favBtn);
+        console.log('UrunId:', favBtn.getAttribute('data-urun-id'));
+        console.log('Global favorileme sistemi aktif:', window.favoriteSystemLoaded);
+    } else {
+        console.log('Favori butonu bulunamadı!');
+    }
 </script>
+
+<style>
+    .btn-fav-toggle {
+        transition: all 0.3s ease !important;
+    }
+    
+    .btn-fav-toggle:hover {
+        background-color: #f6a7a1 !important;
+        border-color: #f6a7a1 !important;
+        color: white !important;
+    }
+    
+    .favorite-active {
+        background-color: #f6a7a1 !important;
+        border-color: #f6a7a1 !important;
+        color: white !important;
+    }
+    
+    .favorite-active:hover {
+        background-color: #e59892 !important;
+        border-color: #e59892 !important;
+    }
+</style>
 
 

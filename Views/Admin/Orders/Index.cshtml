@@ -1,0 +1,56 @@
+@model IEnumerable<dotnet_store.Models.Order>
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var statuses = new[] { "", "Yeni", "Onay", "Kargoya Verildi", "Iptal", "Iade" };
+}
+
+<section class="container my-4">
+    <h2>Siparişler</h2>
+    <form method="get" class="row g-2 mb-3">
+        <div class="col-md-4">
+            <input class="form-control" name="q" value="@Context.Request.Query["q"]" placeholder="Sipariş No" />
+        </div>
+        <div class="col-md-3">
+            <select name="status" class="form-select">
+                @foreach (var s in statuses)
+                {
+                    var selected = Context.Request.Query["status"].ToString() == s ? "selected" : "";
+                    <option value="@s" selected="@selected">@(string.IsNullOrWhiteSpace(s) ? "Tümü" : s)</option>
+                }
+            </select>
+        </div>
+        <div class="col-auto">
+            <button class="btn btn-primary" type="submit">Filtrele</button>
+        </div>
+    </form>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>No</th>
+                <th>Kullanıcı</th>
+                <th>Tarih</th>
+                <th>Toplam</th>
+                <th>Durum</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var o in Model)
+            {
+                <tr>
+                    <td>@o.OrderNumber</td>
+                    <td>@o.UserId</td>
+                    <td>@o.CreatedAt.ToLocalTime().ToString("g")</td>
+                    <td>@o.Total.ToString("C2")</td>
+                    <td>@o.Status</td>
+                    <td>
+                        <a asp-controller="AdminOrders" asp-action="Details" asp-route-orderNumber="@o.OrderNumber" class="btn btn-sm btn-outline-primary">Detay</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</section>
+
+

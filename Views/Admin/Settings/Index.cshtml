@@ -1,0 +1,111 @@
+@model dotnet_store.Controllers.Admin.SiteSettingsVM
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<section class="container my-4">
+    <h2>Site Ayarları</h2>
+    <form asp-controller="AdminSiteSettings" asp-action="Save" method="post" class="row g-3">
+        @Html.AntiForgeryToken()
+
+        <div class="col-12">
+            <h5>Navbar Menüsü</h5>
+            <div id="menuItems">
+                @for (int i = 0; i < (Model.Navbar?.Count ?? 0); i++)
+                {
+                    <div class="row g-2 align-items-center mb-2" data-index="@i">
+                        <div class="col-md-5">
+                            <input name="Navbar[@i].Text" value="@Model.Navbar[i].Text" class="form-control" placeholder="Metin" />
+                        </div>
+                        <div class="col-md-5">
+                            <input name="Navbar[@i].Url" value="@Model.Navbar[i].Url" class="form-control" placeholder="URL" />
+                        </div>
+                        <div class="col-md-2 text-end">
+                            <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeRow(this)">Sil</button>
+                        </div>
+                    </div>
+                }
+                @if ((Model.Navbar?.Count ?? 0) == 0)
+                {
+                    <div class="row g-2 align-items-center mb-2" data-index="0">
+                        <div class="col-md-5">
+                            <input name="Navbar[0].Text" class="form-control" placeholder="Metin" />
+                        </div>
+                        <div class="col-md-5">
+                            <input name="Navbar[0].Url" class="form-control" placeholder="URL" />
+                        </div>
+                        <div class="col-md-2 text-end">
+                            <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeRow(this)">Sil</button>
+                        </div>
+                    </div>
+                }
+            </div>
+            <button type="button" class="btn btn-outline-secondary mt-2" onclick="addRow()">Satır Ekle</button>
+        </div>
+
+        <div class="col-12">
+            <h5>Footer Sosyal Linkler</h5>
+            <div class="row g-2">
+                <div class="col-md-6">
+                    <label>Facebook</label>
+                    <input name="Footer.Facebook" value="@Model.Footer.Facebook" class="form-control" />
+                </div>
+                <div class="col-md-6">
+                    <label>Instagram</label>
+                    <input name="Footer.Instagram" value="@Model.Footer.Instagram" class="form-control" />
+                </div>
+                <div class="col-md-6">
+                    <label>Youtube</label>
+                    <input name="Footer.Youtube" value="@Model.Footer.Youtube" class="form-control" />
+                </div>
+                <div class="col-md-6">
+                    <label>Twitter</label>
+                    <input name="Footer.Twitter" value="@Model.Footer.Twitter" class="form-control" />
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12">
+            <button class="btn btn-primary" type="submit">Kaydet</button>
+        </div>
+    </form>
+    <script>
+        function renumber() {
+            const container = document.getElementById('menuItems');
+            const rows = Array.from(container.querySelectorAll('[data-index]'));
+            rows.forEach((row, i) => {
+                row.setAttribute('data-index', i);
+                const text = row.querySelector('input[name^="Navbar["][name$="].Text"]');
+                const url = row.querySelector('input[name^="Navbar["][name$="].Url"]');
+                if (text) text.setAttribute('name', `Navbar[${i}].Text`);
+                if (url) url.setAttribute('name', `Navbar[${i}].Url`);
+            });
+        }
+        function addRow() {
+            const container = document.getElementById('menuItems');
+            const idx = container.querySelectorAll('[data-index]').length;
+            const row = document.createElement('div');
+            row.className = 'row g-2 align-items-center mb-2';
+            row.setAttribute('data-index', idx);
+            row.innerHTML = `
+                <div class="col-md-5">
+                    <input name="Navbar[${idx}].Text" class="form-control" placeholder="Metin" />
+                </div>
+                <div class="col-md-5">
+                    <input name="Navbar[${idx}].Url" class="form-control" placeholder="URL" />
+                </div>
+                <div class="col-md-2 text-end">
+                    <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeRow(this)">Sil</button>
+                </div>`;
+            container.appendChild(row);
+            renumber();
+        }
+        function removeRow(btn) {
+            const row = btn.closest('[data-index]');
+            if (row) row.remove();
+            renumber();
+        }
+    </script>
+</section>
+
+

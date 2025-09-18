@@ -1,0 +1,37 @@
+@model dotnet_store.Models.SupportRequest
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Destek Talebi #@Model.Id</h2>
+
+<div class="card mb-3">
+    <div class="card-body">
+        <dl class="row mb-0">
+            <dt class="col-sm-3">Tarih</dt>
+            <dd class="col-sm-9">@Model.CreatedAt.ToLocalTime().ToString("f")</dd>
+
+            <dt class="col-sm-3">Tür</dt>
+            <dd class="col-sm-9">@Model.Type</dd>
+
+            <dt class="col-sm-3">E-posta</dt>
+            <dd class="col-sm-9">@Model.Email</dd>
+
+            <dt class="col-sm-3">Kullanıcı</dt>
+            <dd class="col-sm-9">@(Model.User != null ? Model.User.UserName : "-")</dd>
+
+            <dt class="col-sm-3">Mesaj</dt>
+            <dd class="col-sm-9"><pre class="mb-0" style="white-space:pre-wrap">@Model.Message</pre></dd>
+        </dl>
+    </div>
+</div>
+
+<div class="d-flex gap-2">
+    <a href="/admin/support" class="btn btn-secondary">Geri</a>
+    <form method="post" action="/admin/support/delete/@Model.Id" onsubmit="return confirm('Silmek istiyor musunuz?')">
+        @Html.AntiForgeryToken()
+        <button class="btn btn-danger" type="submit">Sil</button>
+    </form>
+</div>
+
+

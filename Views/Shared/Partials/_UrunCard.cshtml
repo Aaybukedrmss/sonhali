@@ -22,20 +22,9 @@
             }
         </div>
         
-        <!-- Badge'ler 
-        <div class="position-absolute top-0 start-0 p-2">
-            @if (Model.Aktif == 1)
-            {
-                <span class="badge bg-success">Aktif</span>
-            }
-            else
-            {
-                <span class="badge bg-secondary">Pasif</span>
-            }
-        </div>
-        -->
+        @* Badge'ler gizlendi *@
         
-        <!-- Favori Butonu -->
+        <!-- Favori Butonu (AJAX) - Herkese göster, JavaScript giriş kontrolü yapacak -->
         <div class="position-absolute top-0 end-0 p-2">
             @{ 
                 var isFav = false; 
@@ -48,20 +37,16 @@
                     }
                 }
             }
-            <form asp-controller="Favorite" asp-action="Toggle" method="post" class="d-inline">
-                @Html.AntiForgeryToken()
-                <input type="hidden" name="urunId" value="@Model.Id" />
-                <button type="submit" class="btn btn-light btn-sm rounded-circle shadow-sm" title="Favorilere ekle/çıkar">
-                    @if (isFav)
-                    {
-                        <i class="fas fa-heart text-danger"></i>
-                    }
-                    else
-                    {
-                        <i class="far fa-heart text-muted"></i>
-                    }
-                </button>
-            </form>
+            <button type="button" class="btn btn-sm rounded-circle shadow-sm btn-fav-toggle @(isFav ? "favorite-active" : "")" data-urun-id="@Model.Id" title="Favorilere ekle/çıkar">
+                @if (isFav)
+                {
+                    <i class="fas fa-heart"></i>
+                }
+                else
+                {
+                    <i class="far fa-heart"></i>
+                }
+            </button>
         </div>
     </div>
 
@@ -77,8 +62,9 @@
             <p class="text-muted small mb-2">@Model.Yayinevi</p>
         </div>
 
-        <!-- Kategori ve Marka -->
+        <!-- Marka ve Medya Tipi -->
         <div class="mb-3">
+            <span class="badge bg-primary me-1">@Model.Marka</span>
             <span class="badge bg-info">@Model.MedyaTipi</span>
         </div>
 
@@ -86,7 +72,10 @@
         <div class="mt-auto">
             <div class="d-flex justify-content-between align-items-center mb-2">
                 <h5 class="text-success fw-bold mb-0">@Model.Fiyat.ToString("C")</h5>
-                
+              <!--  <small class="text-muted">
+                    <i class="fas fa-box me-1"></i> 
+                    @Model.StockQuantity adet
+                </small>-->
             </div>
             
             <!-- Değerlendirme -->
@@ -176,5 +165,39 @@
     
     .badge {
         font-size: 0.75rem;
+    }
+    
+    .btn-fav-toggle {
+        background-color: rgba(255, 255, 255, 0.9) !important;
+        border: 1px solid #ddd !important;
+        color: #666 !important;
+        transition: all 0.3s ease !important;
+    }
+    
+    .btn-fav-toggle:hover {
+        background-color: #f6a7a1 !important;
+        border-color: #f6a7a1 !important;
+        color: white !important;
+        transform: scale(1.1) !important;
+    }
+    
+    .favorite-active {
+        background-color: #f6a7a1 !important;
+        color: white !important;
+        border-color: #f6a7a1 !important;
+    }
+    
+    .favorite-active:hover {
+        background-color: #e59892 !important;
+        border-color: #e59892 !important;
+        transform: scale(1.1) !important;
+    }
+    
+    .btn-sm.rounded-circle {
+        width: 35px;
+        height: 35px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 </style>

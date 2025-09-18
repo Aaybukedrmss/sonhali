@@ -1,0 +1,40 @@
+@model dotnet_store.Models.Admin.AdminProductFormModel
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<section class="container my-4">
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+    }
+    <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+    <h2>Ürün Düzenle</h2>
+    <form asp-controller="AdminProducts" asp-action="Edit" method="post" enctype="multipart/form-data" class="row g-3">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="id" value="@ViewData["ProductId"]" />
+        <div class="col-md-6"><label class="form-label">Ürün Adı</label><input asp-for="ProductName" class="form-control" /><span asp-validation-for="ProductName" class="text-danger"></span></div>
+        <div class="col-md-3"><label class="form-label">SKU</label><input asp-for="Sku" class="form-control" /></div>
+        <div class="col-md-3"><label class="form-label">ISBN</label><input asp-for="Isbn" class="form-control" /></div>
+        <div class="col-md-3"><label class="form-label">Fiyat</label><input asp-for="Fiyat" class="form-control" /><span asp-validation-for="Fiyat" class="text-danger"></span></div>
+        <div class="col-md-3"><label class="form-label">Hazırlık Saati</label><input asp-for="LeadTimeHour" class="form-control" /></div>
+        <div class="col-md-3"><label class="form-label">Stok</label><input asp-for="StockQuantity" class="form-control" /></div>
+        <div class="col-md-3 form-check mt-4"><input asp-for="Aktif" class="form-check-input" /><label class="form-check-label">Aktif</label></div>
+        <div class="col-md-12"><label class="form-label">Açıklama</label><textarea asp-for="FullDescription" class="form-control"></textarea><span asp-validation-for="FullDescription" class="text-danger"></span></div>
+        <div class="col-md-4"><label class="form-label">Yayınevi</label><input asp-for="Yayinevi" class="form-control" /></div>
+        <div class="col-md-4"><label class="form-label">Marka</label><input asp-for="Marka" class="form-control" /></div>
+        <div class="col-md-4"><label class="form-label">Medya Tipi</label><input asp-for="MedyaTipi" class="form-control" /></div>
+        <div class="col-md-3"><label class="form-label">Üst Kategori ID</label><input asp-for="TopMostCategoryId" class="form-control" /><span asp-validation-for="TopMostCategoryId" class="text-danger"></span></div>
+        <div class="col-md-6"><label class="form-label">Üst Kategori Adları</label><input asp-for="TopMostCategoryNames" class="form-control" /><span asp-validation-for="TopMostCategoryNames" class="text-danger"></span></div>
+        <div class="col-md-3"><label class="form-label">Kategori ID</label><input asp-for="CategoryId" class="form-control" /><span asp-validation-for="CategoryId" class="text-danger"></span></div>
+        <div class="col-md-6"><label class="form-label">Kategori Slug</label><input asp-for="CategorySlug" class="form-control" /><span asp-validation-for="CategorySlug" class="text-danger"></span></div>
+        <div class="col-md-3"><label class="form-label">Puan (0-5)</label><input asp-for="TotalRating" class="form-control" /><span asp-validation-for="TotalRating" class="text-danger"></span></div>
+        <div class="col-md-3"><label class="form-label">Yeni Görsel</label><input asp-for="Resim" type="file" class="form-control" /></div>
+        <div class="col-12">
+            <button class="btn btn-primary" type="submit">Kaydet</button>
+            <a asp-controller="AdminProducts" asp-action="Index" class="btn btn-secondary">Geri</a>
+        </div>
+    </form>
+</section>
+
+

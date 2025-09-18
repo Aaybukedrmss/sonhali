@@ -1,0 +1,23 @@
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var emailSent = (bool?)ViewBag.EmailSent == true;
+}
+
+<section class="container my-4">
+    <h2>Admin Şifresi Oluşturuldu</h2>
+    @if (emailSent)
+    {
+        <div class="alert alert-success">Geçici şifre <strong>@ViewBag.Email</strong> adresine gönderildi.</div>
+    }
+    else
+    {
+        <div class="alert alert-warning">E-posta gönderilemedi. SMTP yapılandırması yok. Geçici şifre aşağıdadır:</div>
+        <div class="card"><div class="card-body"><code>@ViewBag.GeneratedPassword</code></div></div>
+    }
+    <div class="mt-3">
+        <a href="/Account/Login" class="btn btn-outline-primary">Giriş Yap</a>
+        <a href="/admin" class="btn btn-primary">Admin Paneline Git</a>
+    </div>
+</section>
+
+

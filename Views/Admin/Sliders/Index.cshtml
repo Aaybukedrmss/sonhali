@@ -1,0 +1,47 @@
+@model IEnumerable<dotnet_store.Models.Slider>
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<section class="container my-4">
+    <div class="d-flex justify-content-between align-items-center">
+        <h2>Sliderlar</h2>
+        <a asp-controller="AdminSliders" asp-action="Create" class="btn btn-primary">Yeni Slider</a>
+    </div>
+
+    <table class="table table-striped mt-3">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Başlık</th>
+                <th>Resim</th>
+                <th>Index</th>
+                <th>Aktif</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var s in Model)
+            {
+                <tr>
+                    <td>@s.Id</td>
+                    <td>@s.Baslik</td>
+                    <td>
+                        <img src="~/@s.Resim" alt="@s.Baslik" style="height:48px" />
+                    </td>
+                    <td>@s.Index</td>
+                    <td>@(s.Aktif ? "Evet" : "Hayır")</td>
+                    <td class="text-end">
+                        <a asp-controller="AdminSliders" asp-action="Edit" asp-route-id="@s.Id" class="btn btn-sm btn-outline-primary">Düzenle</a>
+                        <form asp-controller="AdminSliders" asp-action="Delete" asp-route-id="@s.Id" method="post" class="d-inline">
+                            @Html.AntiForgeryToken()
+                            <button class="btn btn-sm btn-outline-danger" onclick="return confirm('Silinsin mi?')">Sil</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</section>
+
+

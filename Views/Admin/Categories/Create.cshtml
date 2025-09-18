@@ -1,0 +1,27 @@
+@model dotnet_store.Models.KategoriCreateModel
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<section class="container my-4">
+    <h2>Yeni Kategori</h2>
+    <form asp-controller="AdminCategories" asp-action="Create" method="post" class="row g-3">
+        @Html.AntiForgeryToken()
+        <div class="col-md-6">
+            <label class="form-label">Kategori Adı</label>
+            <input asp-for="KategoriAdi" class="form-control" />
+            <span asp-validation-for="KategoriAdi" class="text-danger"></span>
+        </div>
+        <div class="col-md-6">
+            <label class="form-label">URL</label>
+            <input asp-for="Url" class="form-control" />
+            <span asp-validation-for="Url" class="text-danger"></span>
+        </div>
+        <div class="col-12">
+            <button class="btn btn-primary" type="submit">Kaydet</button>
+            <a asp-controller="AdminCategories" asp-action="Index" class="btn btn-secondary">İptal</a>
+        </div>
+    </form>
+</section>
+
+
