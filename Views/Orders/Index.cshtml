@@ -17,22 +17,22 @@
     <!-- Desktop Table -->
     <div class="table-responsive d-none d-lg-block">
         <table class="table order-table table-hover">
-            <thead>
-                <tr>
+        <thead>
+            <tr>
                     <th style="width: 15%;">Sipariş Tarihi</th>
                     <th style="width: 35%;">Sipariş Özeti</th>
                     <th style="width: 15%;">Alıcı</th>
                     <th style="width: 10%;">Tutar</th>
                     <th style="width: 10%;">Durum</th>
                     <th style="width: 15%;">İşlemler</th>
-                </tr>
-            </thead>
-            <tbody>
-            @if (Model != null && Model.Any())
+            </tr>
+        </thead>
+        <tbody>
+        @if (Model != null && Model.Any())
+        {
+            foreach (var o in Model)
             {
-                foreach (var o in Model)
-                {
-                    <tr data-status="@o.Order.Status">
+                <tr data-status="@o.Order.Status">
                         <td>
                             <div class="fw-bold">@o.Order.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy")</div>
                             <small class="text-muted">@o.Order.CreatedAt.ToLocalTime().ToString("HH:mm")</small>
@@ -264,7 +264,7 @@
     }
     
     /* Responsive adjustments */
-    @media (max-width: 1200px) {
+    @@media (max-width: 1200px) {
         .order-table {
             font-size: 0.9rem;
         }
@@ -275,7 +275,7 @@
         }
     }
     
-    @media (max-width: 992px) {
+    @@media (max-width: 992px) {
         .filters {
             flex-wrap: wrap;
             gap: 0.5rem;
@@ -287,7 +287,7 @@
         }
     }
     
-    @media (max-width: 576px) {
+    @@media (max-width: 576px) {
         .container {
             padding: 0 1rem;
         }
@@ -305,42 +305,77 @@
 
 <script>
     (function(){
+        console.log('Sipariş filtreleme sistemi başlatılıyor...');
+        
         const buttons = document.querySelectorAll('.filters [data-status]');
-        buttons.forEach(btn => {
+        console.log(`${buttons.length} filtre butonu bulundu`);
+        
+        buttons.forEach((btn, index) => {
+            console.log(`Buton ${index + 1}: ${btn.textContent} - Status: ${btn.dataset.status}`);
+            
             btn.addEventListener('click', function(){
+                console.log(`Filtre tıklandı: ${this.textContent} (${this.dataset.status})`);
+                
                 // Button states
-                buttons.forEach(b => b.classList.remove('btn-primary','active'));
-                buttons.forEach(b => b.classList.add('btn-outline-secondary'));
+                buttons.forEach(b => {
+                    b.classList.remove('btn-primary','active');
+                    b.classList.add('btn-outline-secondary');
+                });
                 this.classList.remove('btn-outline-secondary');
                 this.classList.add('btn-primary','active');
                 
                 const status = this.dataset.status;
+                console.log(`Filtreleme yapılıyor: ${status}`);
                 
                 // Filter desktop table rows
-                document.querySelectorAll('.order-table tbody tr').forEach(row => {
-                    if (status === 'All' || row.dataset.status === status) {
+                const tableRows = document.querySelectorAll('.order-table tbody tr');
+                console.log(`${tableRows.length} tablo satırı bulundu`);
+                
+                let visibleTableRows = 0;
+                tableRows.forEach((row, index) => {
+                    const rowStatus = row.dataset.status;
+                    console.log(`Satır ${index + 1}: Status = ${rowStatus}`);
+                    
+                    if (status === 'All' || rowStatus === status) {
                         row.style.display = '';
+                        visibleTableRows++;
+                        console.log(`Satır ${index + 1} gösteriliyor`);
                     } else {
                         row.style.display = 'none';
+                        console.log(`Satır ${index + 1} gizleniyor`);
                     }
                 });
                 
                 // Filter mobile cards
-                document.querySelectorAll('.order-card').forEach(card => {
-                    if (status === 'All' || card.dataset.status === status) {
+                const mobileCards = document.querySelectorAll('.order-card');
+                console.log(`${mobileCards.length} mobil kart bulundu`);
+                
+                let visibleMobileCards = 0;
+                mobileCards.forEach((card, index) => {
+                    const cardStatus = card.dataset.status;
+                    console.log(`Kart ${index + 1}: Status = ${cardStatus}`);
+                    
+                    if (status === 'All' || cardStatus === status) {
                         card.style.display = '';
+                        visibleMobileCards++;
+                        console.log(`Kart ${index + 1} gösteriliyor`);
                     } else {
                         card.style.display = 'none';
+                        console.log(`Kart ${index + 1} gizleniyor`);
                     }
                 });
+                
+                console.log(`Filtreleme tamamlandı: ${visibleTableRows} tablo satırı, ${visibleMobileCards} mobil kart görünür`);
             });
         });
         
         // Search functionality
         const searchInput = document.querySelector('input[placeholder="Ürün ismi veya marka ara"]');
         if (searchInput) {
+            console.log('Arama fonksiyonu başlatılıyor...');
             searchInput.addEventListener('input', function() {
                 const searchTerm = this.value.toLowerCase();
+                console.log(`Arama terimi: "${searchTerm}"`);
                 
                 // Search in desktop table
                 document.querySelectorAll('.order-table tbody tr').forEach(row => {
@@ -362,7 +397,11 @@
                     }
                 });
             });
+        } else {
+            console.log('Arama inputu bulunamadı');
         }
+        
+        console.log('Sipariş filtreleme sistemi başlatıldı');
     })();
 </script>
 

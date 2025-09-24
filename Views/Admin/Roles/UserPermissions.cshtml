@@ -1,0 +1,179 @@
+@model dotnet_store.Models.Admin.UserRolePermissionViewModel
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Kullanıcı İzinleri";
+}
+
+<section class="container my-4">
+    <div class="row">
+        <div class="col-md-8">
+            <h2><i class="fas fa-user me-2"></i>@Model.User.UserName İzinleri</h2>
+            <p class="text-muted">Bu kullanıcının sahip olduğu izinleri görüntüleyebilirsiniz</p>
+        </div>
+        <div class="col-md-4 text-end">
+            <a href="/admin/roles/users" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left me-1"></i>Kullanıcı Listesine Dön
+            </a>
+        </div>
+    </div>
+
+    <!-- Kullanıcı Bilgileri -->
+    <div class="card mb-3">
+        <div class="card-header">
+            <h5 class="mb-0"><i class="fas fa-user me-2"></i>Kullanıcı Bilgileri</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>Kullanıcı Adı:</strong> @Model.User.UserName</p>
+                    <p><strong>E-posta:</strong> @Model.User.Email</p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Roller:</strong>
+                        @if (Model.Roles.Any())
+                        {
+                            @foreach (var role in Model.Roles)
+                            {
+                                <span class="badge bg-primary me-1">@role</span>
+                            }
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary">Rol Yok</span>
+                        }
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Kullanıcının İzinleri -->
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0"><i class="fas fa-key me-2"></i>Kullanıcının İzinleri</h5>
+        </div>
+        <div class="card-body">
+            @if (Model.UserPermissions.Any())
+            {
+                <div class="row">
+                    @foreach (var permissionId in Model.UserPermissions)
+                    {
+                        var permission = Model.AvailablePermissions.FirstOrDefault(p => p.Id == permissionId);
+                        if (permission != null)
+                        {
+                            <div class="col-md-6 mb-3">
+                                <div class="card border-success">
+                                    <div class="card-body">
+                                        <h6 class="card-title text-success">
+                                            <i class="fas fa-check-circle me-1"></i>@permission.Name
+                                        </h6>
+                                        <p class="card-text text-muted">@permission.Description</p>
+                                        <small class="text-muted">
+                                            <i class="fas fa-folder me-1"></i>@permission.Category
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-warning text-center">
+                    <i class="fas fa-exclamation-triangle me-1"></i>Bu kullanıcının henüz izni bulunmuyor.
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- İzin Kategorileri -->
+    <div class="card mt-3">
+        <div class="card-header">
+            <h5 class="mb-0"><i class="fas fa-chart-pie me-2"></i>İzin Kategorileri</h5>
+        </div>
+        <div class="card-body">
+            @if (Model.AvailablePermissions.Any())
+            {
+                <div class="row">
+                    @foreach (var category in Model.AvailablePermissions.GroupBy(p => p.Category))
+                    {
+                        var categoryPermissions = Model.UserPermissions
+                            .Where(up => Model.AvailablePermissions.Any(ap => ap.Id == up && ap.Category == category.Key))
+                            .Count();
+                        var totalPermissions = category.Count();
+                        var percentage = totalPermissions > 0 ? (categoryPermissions * 100) / totalPermissions : 0;
+                        
+                        <div class="col-md-6 mb-3">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h6 class="card-title">
+                                        <i class="fas fa-folder me-1"></i>@category.Key
+                                    </h6>
+                                    <div class="progress mb-2" style="height: 20px;">
+                                        <div class="progress-bar" role="progressbar" 
+                                             style="width: @percentage%" 
+                                             aria-valuenow="@percentage" 
+                                             aria-valuemin="0" 
+                                             aria-valuemax="100">
+                                            @categoryPermissions/@totalPermissions
+                                        </div>
+                                    </div>
+                                    <small class="text-muted">
+                                        @categoryPermissions izin sahibi (@percentage.ToString("F0")%)
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-info text-center">
+                    <i class="fas fa-info-circle me-1"></i>Henüz izin tanımlanmamış.
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- Hızlı İşlemler -->
+    <div class="card mt-3">
+        <div class="card-header">
+            <h5 class="mb-0"><i class="fas fa-bolt me-2"></i>Hızlı İşlemler</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4">
+                    <a href="/admin/roles/users" class="btn btn-primary w-100">
+                        <i class="fas fa-users me-1"></i>Kullanıcı Listesi
+                    </a>
+                </div>
+                <div class="col-md-4">
+                    <a href="/admin/roles" class="btn btn-outline-primary w-100">
+                        <i class="fas fa-user-shield me-1"></i>Rol Yönetimi
+                    </a>
+                </div>
+                <div class="col-md-4">
+                    <a href="/admin/roles/permissions" class="btn btn-outline-secondary w-100">
+                        <i class="fas fa-key me-1"></i>İzin Yönetimi
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+.progress-bar {
+    background-color: #28a745;
+}
+
+.card.border-success {
+    border-color: #28a745 !important;
+}
+
+.text-success {
+    color: #28a745 !important;
+}
+</style>

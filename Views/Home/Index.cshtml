@@ -54,3 +54,234 @@ else
     </section>
 }
 
+<script>
+// Bildirim gösterme fonksiyonu
+let lastNotification = 0;
+
+function showNotification(message, type) {
+    const now = Date.now();
+    
+    // 3 saniye içinde tekrar bildirim gösterme
+    if (now - lastNotification < 3000) {
+        return;
+    }
+    
+    lastNotification = now;
+    
+    // Mevcut bildirimleri kaldır
+    const existing = document.querySelectorAll('.favorite-notification');
+    existing.forEach(n => n.remove());
+    
+    // Yeni bildirim oluştur
+    const notification = document.createElement('div');
+    notification.className = 'favorite-notification';
+    notification.textContent = message;
+    
+    // Tip'e göre stil belirle
+    let bgColor, textColor;
+    switch(type) {
+        case 'success':
+            bgColor = '#f6a7a1';
+            textColor = 'white';
+            break;
+        case 'info':
+            bgColor = '#f7c7ba';
+            textColor = '#3c2323';
+            break;
+        case 'error':
+            bgColor = '#dc3545';
+            textColor = 'white';
+            break;
+        default:
+            bgColor = '#f6a7a1';
+            textColor = 'white';
+    }
+    
+    // Stil
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background-color: ${bgColor};
+        color: ${textColor};
+        padding: 15px 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        z-index: 9999;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        font-size: 14px;
+        font-weight: 500;
+        max-width: 300px;
+        word-wrap: break-word;
+        opacity: 0;
+        transform: translateX(100%);
+        transition: all 0.3s ease;
+    `;
+    
+    // Animasyon için keyframes ekle
+    const style = document.createElement('style');
+    style.textContent = `
+        @@keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(100%);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        @@keyframes slideOutRight {
+            from {
+                opacity: 1;
+                transform: translateX(0);
+            }
+            to {
+                opacity: 0;
+                transform: translateX(100%);
+            }
+        }
+        
+        .favorite-notification {
+            animation: slideInRight 0.3s ease forwards;
+        }
+        
+        .favorite-notification.fade-out {
+            animation: slideOutRight 0.3s ease forwards;
+        }
+    `;
+    
+    if (!document.querySelector('style[data-notification]')) {
+        style.setAttribute('data-notification', 'true');
+        document.head.appendChild(style);
+    }
+    
+    // DOM'a ekle
+    document.body.appendChild(notification);
+    
+    // 3 saniye sonra kaldır
+    setTimeout(() => {
+        notification.classList.add('fade-out');
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.parentNode.removeChild(notification);
+            }
+        }, 300);
+    }, 3000);
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Ana sayfa DOMContentLoaded çalışıyor');
+    
+    // Ürün kartları favorileme butonlarını bul
+    const favoriteButtons = document.querySelectorAll('.product-card-fav-toggle');
+    console.log(`${favoriteButtons.length} ürün kartı favorileme butonu bulundu`);
+    
+    if (favoriteButtons.length === 0) {
+        console.log('Hiç ürün kartı favorileme butonu bulunamadı');
+        return;
+    }
+    
+    favoriteButtons.forEach((button, index) => {
+        console.log(`Buton ${index + 1}:`, button);
+        
+        // Event listener ekle
+        button.addEventListener('click', function(event) {
+            console.log('Inline favorileme butonu tıklandı!');
+            
+            event.preventDefault();
+            event.stopPropagation();
+            
+            const urunId = button.getAttribute('data-urun-id');
+            console.log('UrunId:', urunId);
+            
+            if (!urunId) {
+                console.error('UrunId bulunamadı!');
+                return;
+            }
+            
+            // Butonu devre dışı bırak
+            button.disabled = true;
+            const originalHTML = button.innerHTML;
+            button.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+            
+            // Token'ı bul
+            const tokenInput = document.querySelector('input[name="__RequestVerificationToken"]');
+            if (!tokenInput) {
+                console.error('Anti-forgery token bulunamadı!');
+                button.disabled = false;
+                button.innerHTML = originalHTML;
+                return;
+            }
+            
+            const token = tokenInput.value;
+            
+            // AJAX isteği - timeout ile
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 saniye timeout
+            
+            fetch('/Favorite/ToggleAjax', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: `urunId=${encodeURIComponent(urunId)}&__RequestVerificationToken=${encodeURIComponent(token)}`,
+                signal: controller.signal
+            })
+            .then(response => {
+                clearTimeout(timeoutId); // Timeout'u temizle
+                if (!response.ok) {
+                    if (response.status === 401) {
+                        showNotification('Favorilere eklemek için giriş yapmalısınız!', 'error');
+                        setTimeout(() => {
+                            window.location.href = '/Account/Login';
+                        }, 2000);
+                        return;
+                    }
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Sunucu yanıtı:', data);
+                
+                if (!data.success) {
+                    throw new Error(data.error || 'Bilinmeyen hata');
+                }
+                
+                // Butonu güncelle
+                if (data.isFavorite) {
+                    button.classList.add('favorite-active');
+                    showNotification('❤️ Ürün favorilere eklendi!', 'success');
+                } else {
+                    button.classList.remove('favorite-active');
+                    showNotification('💔 Ürün favorilerden çıkarıldı!', 'info');
+                }
+                
+                // Butonu tekrar aktif et
+                button.disabled = false;
+            })
+            .catch(error => {
+                clearTimeout(timeoutId); // Timeout'u temizle
+                console.error('Favori işlemi hatası:', error);
+                
+                if (error.name === 'AbortError') {
+                    showNotification('⏱️ İşlem zaman aşımına uğradı!', 'error');
+                } else {
+                    showNotification('❌ Hata oluştu!', 'error');
+                }
+                
+                // Butonu tekrar aktif et
+                button.disabled = false;
+                button.innerHTML = originalHTML;
+            });
+        });
+        
+        console.log(`Buton ${index + 1} için event listener eklendi`);
+    });
+    
+    console.log('Tüm ürün kartı favorileme butonlarına event listener eklendi');
+});
+</script>

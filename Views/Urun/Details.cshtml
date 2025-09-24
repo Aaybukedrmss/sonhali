@@ -121,10 +121,7 @@
                                     Sepete Ekle
                                 </button>
                             </form>
-                            <button class="btn btn-outline-primary py-2">
-                                <i class="fas fa-bolt me-2"></i>
-                                Hemen Al
-                            </button>
+                            
                         </div>
                     }
                     else
@@ -156,7 +153,7 @@
                         
                         @if (SignInManager.IsSignedIn(User))
                         {
-                            <button type="button" class="btn btn-outline-primary btn-fav-toggle @(isFavMain ? "favorite-active" : "")" data-urun-id="@Model.Id">
+                            <button type="button" class="btn btn-outline-primary product-detail-fav-toggle @(isFavMain ? "favorite-active" : "")" data-urun-id="@Model.Id">
                                 @if (isFavMain)
                                 {
                                     <i class="fas fa-heart me-2"></i><span>Favorilerde</span>
@@ -174,7 +171,7 @@
                             </a>
                         }
                         
-                        <button class="btn btn-outline-info">
+                        <button id="shareButton" class="btn btn-outline-info" data-title="@Model.ProductName" data-text="@Model.Marka - @Model.ProductName">
                             <i class="fas fa-share-alt me-2"></i>
                             Paylaş
                         </button>
@@ -249,19 +246,7 @@
                                     <h5 class="mb-3">Ürün Açıklaması</h5>
                                     <p class="text-muted">@Model.FullDescription</p>
                                 </div>
-                                <div class="col-md-4">
-                                    <div class="card bg-light">
-                                        <div class="card-body">
-                                            <h6 class="card-title">Hızlı Bilgiler</h6>
-                                            <ul class="list-unstyled mb-0">
-                                                <li class="mb-2"><i class="fas fa-tag me-2 text-primary"></i>SKU: @Model.Sku</li>
-                                                <li class="mb-2"><i class="fas fa-layer-group me-2 text-primary"></i>Kategori: @Model.TopMostCategoryNames</li>
-                                                <li class="mb-2"><i class="fas fa-box me-2 text-primary"></i>Stok: @Model.StockQuantity adet</li>
-                                                <li><i class="fas fa-clock me-2 text-primary"></i>Hazırlık: @Model.LeadTimeHour saat</li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
+                                
                             </div>
                         </div>
 
@@ -488,24 +473,247 @@
         });
     });
 
-    // Favorileme butonu test - Global sistem tarafından yönetiliyor
+    // Favorileme sistemi artık site.js tarafından yönetiliyor
     console.log('Detail sayfası script çalışıyor');
-    const favBtn = document.querySelector('.btn-fav-toggle');
-    if (favBtn) {
-        console.log('Favori butonu bulundu:', favBtn);
-        console.log('UrunId:', favBtn.getAttribute('data-urun-id'));
-        console.log('Global favorileme sistemi aktif:', window.favoriteSystemLoaded);
-    } else {
-        console.log('Favori butonu bulunamadı!');
+    
+    // Gerçek favorileme sistemi
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('Detail sayfası DOMContentLoaded çalışıyor');
+        
+        // Web Share API ile Paylaş butonu
+        const shareBtn = document.getElementById('shareButton');
+        if (shareBtn) {
+            shareBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                const shareData = {
+                    title: shareBtn.getAttribute('data-title') || document.title,
+                    text: shareBtn.getAttribute('data-text') || '',
+                    url: window.location.href
+                };
+                if (navigator.share) {
+                    navigator.share(shareData).catch(err => console.warn('Paylaşım iptal/başarısız:', err));
+                } else {
+                    // Fallback: url kopyala
+                    navigator.clipboard?.writeText(shareData.url).then(() => {
+                        showNotification('🔗 Bağlantı panoya kopyalandı', 'info');
+                    }).catch(() => {
+                        prompt('Bu bağlantıyı kopyalayın:', shareData.url);
+                    });
+                }
+            });
+        }
+        
+        const favoriteButton = document.querySelector('.product-detail-fav-toggle');
+        console.log('Favorileme butonu:', favoriteButton);
+        
+        if (favoriteButton) {
+            favoriteButton.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                console.log('Favorileme butonu tıklandı');
+                
+                const urunId = favoriteButton.getAttribute('data-urun-id');
+                console.log('UrunId:', urunId);
+                
+                if (!urunId) {
+                    alert('Ürün ID bulunamadı!');
+                    return;
+                }
+                
+                // Butonu devre dışı bırak
+                favoriteButton.disabled = true;
+                const originalHTML = favoriteButton.innerHTML;
+                favoriteButton.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i><span>İşleniyor...</span>';
+                
+                // Token'ı bul
+                const tokenInput = document.querySelector('input[name="__RequestVerificationToken"]');
+                if (!tokenInput) {
+                    alert('Güvenlik token\'ı bulunamadı!');
+                    favoriteButton.disabled = false;
+                    favoriteButton.innerHTML = originalHTML;
+                    return;
+                }
+                
+                const token = tokenInput.value;
+                console.log('Token bulundu');
+                
+                // AJAX isteği
+                fetch('/Favorite/ToggleAjax', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: `urunId=${encodeURIComponent(urunId)}&__RequestVerificationToken=${encodeURIComponent(token)}`
+                })
+                .then(response => {
+                    console.log('Sunucu yanıtı:', response.status);
+                    
+                    if (!response.ok) {
+                        if (response.status === 401) {
+                            alert('Favorilere eklemek için giriş yapmalısınız!');
+                            window.location.href = '/Account/Login';
+                            return;
+                        }
+                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Sunucu verisi:', data);
+                    
+                    if (!data.success) {
+                        throw new Error(data.error || 'Bilinmeyen hata');
+                    }
+                    
+                    // Butonu güncelle
+                    const icon = favoriteButton.querySelector('i');
+                    const span = favoriteButton.querySelector('span');
+                    
+                    if (data.isFavorite) {
+                        // Favoriye eklendi
+                        if (icon) {
+                            icon.className = 'fas fa-heart me-2';
+                        }
+                        favoriteButton.classList.add('favorite-active');
+                        if (span) span.textContent = 'Favorilerde';
+                        showNotification('❤️ Ürün favorilere eklendi!', 'success');
+                    } else {
+                        // Favoriden çıkarıldı
+                        if (icon) {
+                            icon.className = 'far fa-heart me-2';
+                        }
+                        favoriteButton.classList.remove('favorite-active');
+                        if (span) span.textContent = 'Favorilere Ekle';
+                        showNotification('💔 Ürün favorilerden çıkarıldı!', 'info');
+                    }
+                    
+                    // Butonu tekrar aktif et
+                    favoriteButton.disabled = false;
+                })
+                .catch(error => {
+                    console.error('Favori işlemi hatası:', error);
+                    showNotification('❌ Hata oluştu!', 'error');
+                    
+                    // Butonu tekrar aktif et
+                    favoriteButton.disabled = false;
+                    favoriteButton.innerHTML = originalHTML;
+                });
+            });
+        }
+    });
+    
+    // Bildirim gösterme fonksiyonu
+    let lastNotification = 0;
+    
+    function showNotification(message, type) {
+        const now = Date.now();
+        
+        // 3 saniye içinde tekrar bildirim gösterme
+        if (now - lastNotification < 3000) {
+            return;
+        }
+        
+        lastNotification = now;
+        
+        // Mevcut bildirimleri kaldır
+        const existing = document.querySelectorAll('.favorite-notification');
+        existing.forEach(n => n.remove());
+        
+        // Yeni bildirim oluştur
+        const notification = document.createElement('div');
+        notification.className = 'favorite-notification';
+        notification.textContent = message;
+        
+        // Tip'e göre stil belirle
+        let bgColor, textColor;
+        switch(type) {
+            case 'success':
+                bgColor = '#f6a7a1';
+                textColor = 'white';
+                break;
+            case 'info':
+                bgColor = '#f7c7ba';
+                textColor = '#3c2323';
+                break;
+            case 'error':
+                bgColor = '#dc3545';
+                textColor = 'white';
+                break;
+            default:
+                bgColor = '#f6a7a1';
+                textColor = 'white';
+        }
+        
+        // Stil
+        notification.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: ${bgColor};
+            color: ${textColor};
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            z-index: 9999;
+            font-weight: 500;
+            font-size: 14px;
+            max-width: 300px;
+            animation: slideInRight 0.3s ease-out;
+        `;
+        
+        // Animasyon CSS'i ekle
+        if (!document.querySelector('#notification-styles')) {
+            const style = document.createElement('style');
+            style.id = 'notification-styles';
+            style.textContent = `
+                @@keyframes slideInRight {
+                    from {
+                        transform: translateX(100%);
+                        opacity: 0;
+                    }
+                    to {
+                        transform: translateX(0);
+                        opacity: 1;
+                    }
+                }
+                @@keyframes slideOutRight {
+                    from {
+                        transform: translateX(0);
+                        opacity: 1;
+                    }
+                    to {
+                        transform: translateX(100%);
+                        opacity: 0;
+                    }
+                }
+            `;
+            document.head.appendChild(style);
+        }
+        
+        // Sayfaya ekle
+        document.body.appendChild(notification);
+        
+        // 3 saniye sonra kaldır
+        setTimeout(() => {
+            notification.style.animation = 'slideOutRight 0.3s ease-out';
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.parentNode.removeChild(notification);
+                }
+            }, 300);
+        }, 3000);
     }
 </script>
 
 <style>
-    .btn-fav-toggle {
+    .product-detail-fav-toggle {
         transition: all 0.3s ease !important;
+        color: #f6a7a1 !important;
     }
     
-    .btn-fav-toggle:hover {
+    .product-detail-fav-toggle:hover {
         background-color: #f6a7a1 !important;
         border-color: #f6a7a1 !important;
         color: white !important;
@@ -522,5 +730,122 @@
         border-color: #e59892 !important;
     }
 </style>
+
+<script>
+// Benzer ürünler için favorileme sistemi
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Detail sayfası benzer ürünler favorileme sistemi başlatılıyor');
+    
+    // Benzer ürünler favorileme butonlarını bul
+    const similarProductButtons = document.querySelectorAll('.product-card-fav-toggle');
+    console.log(`${similarProductButtons.length} benzer ürün favorileme butonu bulundu`);
+    
+    if (similarProductButtons.length === 0) {
+        console.log('Hiç benzer ürün favorileme butonu bulunamadı');
+        return;
+    }
+    
+    similarProductButtons.forEach((button, index) => {
+        console.log(`Benzer ürün buton ${index + 1}:`, button);
+        
+        // Event listener ekle
+        button.addEventListener('click', function(event) {
+            console.log('Benzer ürün favorileme butonu tıklandı!');
+            
+            event.preventDefault();
+            event.stopPropagation();
+            
+            const urunId = button.getAttribute('data-urun-id');
+            console.log('Benzer ürün UrunId:', urunId);
+            
+            if (!urunId) {
+                console.error('Benzer ürün UrunId bulunamadı!');
+                return;
+            }
+            
+            // Butonu devre dışı bırak
+            button.disabled = true;
+            const originalHTML = button.innerHTML;
+            button.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+            
+            // Token'ı bul
+            const tokenInput = document.querySelector('input[name="__RequestVerificationToken"]');
+            if (!tokenInput) {
+                console.error('Anti-forgery token bulunamadı!');
+                button.disabled = false;
+                button.innerHTML = originalHTML;
+                return;
+            }
+            
+            const token = tokenInput.value;
+            
+            // AJAX isteği - timeout ile
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 saniye timeout
+            
+            fetch('/Favorite/ToggleAjax', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: `urunId=${encodeURIComponent(urunId)}&__RequestVerificationToken=${encodeURIComponent(token)}`,
+                signal: controller.signal
+            })
+            .then(response => {
+                clearTimeout(timeoutId); // Timeout'u temizle
+                if (!response.ok) {
+                    if (response.status === 401) {
+                        showNotification('Favorilere eklemek için giriş yapmalısınız!', 'error');
+                        setTimeout(() => {
+                            window.location.href = '/Account/Login';
+                        }, 2000);
+                        return;
+                    }
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Benzer ürün sunucu yanıtı:', data);
+                
+                if (!data.success) {
+                    throw new Error(data.error || 'Bilinmeyen hata');
+                }
+                
+                // Butonu güncelle
+                if (data.isFavorite) {
+                    button.classList.add('favorite-active');
+                    showNotification('❤️ Ürün favorilere eklendi!', 'success');
+                } else {
+                    button.classList.remove('favorite-active');
+                    showNotification('💔 Ürün favorilerden çıkarıldı!', 'info');
+                }
+                
+                // Butonu tekrar aktif et
+                button.disabled = false;
+            })
+            .catch(error => {
+                clearTimeout(timeoutId); // Timeout'u temizle
+                console.error('Benzer ürün favori işlemi hatası:', error);
+                
+                if (error.name === 'AbortError') {
+                    showNotification('⏱️ İşlem zaman aşımına uğradı!', 'error');
+                } else {
+                    showNotification('❌ Hata oluştu!', 'error');
+                }
+                
+                // Butonu tekrar aktif et
+                button.disabled = false;
+                button.innerHTML = originalHTML;
+            });
+        });
+        
+        console.log(`Benzer ürün buton ${index + 1} için event listener eklendi`);
+    });
+    
+    console.log('Tüm benzer ürün favorileme butonlarına event listener eklendi');
+});
+</script>
 
 

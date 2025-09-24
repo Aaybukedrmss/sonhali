@@ -64,6 +64,10 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cRGFzaGJvYXJkXEluZGV4LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/Aybüke/OneDrive/Masaüstü/staj-shopcolist-ndexurunsuzloginokey-main/Views/Admin/Dashboard/Support.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cRGFzaGJvYXJkXFN1cHBvcnQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/Aybüke/OneDrive/Masaüstü/staj-shopcolist-ndexurunsuzloginokey-main/Views/Admin/HiddenAdmin/Done.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cSGlkZGVuQWRtaW5cRG9uZS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
@@ -98,6 +102,22 @@ build_metadata.AdditionalFiles.CssScope =
 
 [C:/Users/Aybüke/OneDrive/Masaüstü/staj-shopcolist-ndexurunsuzloginokey-main/Views/Admin/Roles/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cUm9sZXNcSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Aybüke/OneDrive/Masaüstü/staj-shopcolist-ndexurunsuzloginokey-main/Views/Admin/Roles/Permissions.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cUm9sZXNcUGVybWlzc2lvbnMuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Aybüke/OneDrive/Masaüstü/staj-shopcolist-ndexurunsuzloginokey-main/Views/Admin/Roles/RolePermissions.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cUm9sZXNcUm9sZVBlcm1pc3Npb25zLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Aybüke/OneDrive/Masaüstü/staj-shopcolist-ndexurunsuzloginokey-main/Views/Admin/Roles/UserPermissions.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cUm9sZXNcVXNlclBlcm1pc3Npb25zLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Aybüke/OneDrive/Masaüstü/staj-shopcolist-ndexurunsuzloginokey-main/Views/Admin/Roles/Users.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cUm9sZXNcVXNlcnMuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/Aybüke/OneDrive/Masaüstü/staj-shopcolist-ndexurunsuzloginokey-main/Views/Admin/Settings/Index.cshtml]

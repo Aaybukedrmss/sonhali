@@ -1,51 +1,181 @@
 @model IEnumerable<Microsoft.AspNetCore.Identity.IdentityRole<int>>
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Rol Yönetimi";
 }
 
 <section class="container my-4">
-    <h2>Rol Yönetimi</h2>
-
-    <div class="card mt-3">
-        <div class="card-body">
-            <form asp-action="Create" asp-controller="AdminRoles" method="post" class="row g-2">
-                <div class="col-auto">
-                    <input name="name" class="form-control" placeholder="Yeni rol adı (örn: Admin)" />
-                </div>
-                <div class="col-auto">
-                    <button class="btn btn-primary" type="submit">Rol Oluştur</button>
-                </div>
-                @Html.AntiForgeryToken()
-            </form>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="fas fa-shield-alt me-2"></i>Rol Yönetimi</h2>
+        <div class="btn-group">
+            <a href="/admin/roles/users" class="btn btn-outline-success">
+                <i class="fas fa-users me-1"></i>Kullanıcı Rolleri
+            </a>
+            <a href="/admin/roles/permissions" class="btn btn-outline-primary">
+                <i class="fas fa-key me-1"></i>İzin Yönetimi
+            </a>
         </div>
     </div>
 
-    <h5 class="mt-4">Mevcut Roller</h5>
-    <ul class="list-group">
-        @foreach (var r in Model)
-        {
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-                <span>@r.Name</span>
-            </li>
-        }
-    </ul>
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle me-2"></i>@TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-circle me-2"></i>@TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-plus me-2"></i>Yeni Rol Oluştur</h5>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Create" asp-controller="AdminRoles" method="post">
+                        <div class="mb-3">
+                            <label class="form-label">Rol Adı</label>
+                            <input name="name" class="form-control" placeholder="Örn: Moderator, Editor, Manager" required />
+                            <div class="form-text">Rol adı benzersiz olmalıdır</div>
+                        </div>
+                        <button class="btn btn-primary" type="submit">
+                            <i class="fas fa-plus me-1"></i>Rol Oluştur
+                        </button>
+                        @Html.AntiForgeryToken()
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-user-plus me-2"></i>Hızlı Rol Ata</h5>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Assign" asp-controller="AdminRoles" method="post">
+                        <div class="mb-3">
+                            <label class="form-label">Kullanıcı</label>
+                            <input name="usernameOrEmail" class="form-control" placeholder="Kullanıcı adı veya e-posta" required />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Rol</label>
+                            <input name="role" class="form-control" placeholder="Rol adı" required />
+                        </div>
+                        <button class="btn btn-success" type="submit">
+                            <i class="fas fa-user-plus me-1"></i>Rol Ata
+                        </button>
+                        @Html.AntiForgeryToken()
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div class="card mt-4">
+        <div class="card-header">
+            <h5 class="mb-0"><i class="fas fa-list me-2"></i>Mevcut Roller</h5>
+        </div>
         <div class="card-body">
-            <form asp-action="Assign" asp-controller="AdminRoles" method="post" class="row g-2">
-                <div class="col-md-4">
-                    <input name="usernameOrEmail" class="form-control" placeholder="Kullanıcı adı veya e-posta" />
+            @if (Model.Any())
+            {
+                <div class="row">
+                    @foreach (var role in Model)
+                    {
+                        <div class="col-md-4 mb-3">
+                            <div class="card border-primary">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="card-title mb-1">
+                                                <i class="fas fa-shield-alt me-1"></i>@role.Name
+                                            </h6>
+                                            <small class="text-muted">ID: @role.Id</small>
+                                        </div>
+                                        <div>
+                                            <div class="btn-group">
+                                                <a href="/admin/roles/role-permissions/@role.Id" class="btn btn-sm btn-outline-primary">
+                                                    <i class="fas fa-key me-1"></i>İzinler
+                                                </a>
+                                                @if (role.Name != "Admin")
+                                                {
+                                                    <form asp-action="DeleteRole" asp-controller="AdminRoles" method="post" class="d-inline">
+                                                        <input type="hidden" name="roleId" value="@role.Id" />
+                                                        <button type="submit" class="btn btn-sm btn-outline-danger" 
+                                                                onclick="return confirm('@role.Name rolünü silmek istediğinizden emin misiniz? Bu işlem geri alınamaz!')">
+                                                            <i class="fas fa-trash"></i>
+                                                        </button>
+                                                        @Html.AntiForgeryToken()
+                                                    </form>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-warning">Korunmuş</span>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
                 </div>
-                <div class="col-md-3">
-                    <input name="role" class="form-control" placeholder="Rol adı" />
+            }
+            else
+            {
+                <div class="text-center py-4">
+                    <i class="fas fa-shield-alt fa-3x text-muted mb-3"></i>
+                    <h5 class="text-muted">Henüz rol oluşturulmamış</h5>
+                    <p class="text-muted">İlk rolünüzü oluşturmak için yukarıdaki formu kullanın</p>
                 </div>
-                <div class="col-auto">
-                    <button class="btn btn-success" type="submit">Rol Ata</button>
-                </div>
-                @Html.AntiForgeryToken()
-            </form>
+            }
         </div>
     </div>
+
+    
 </section>
 
+<style>
+.card {
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    border: 1px solid rgba(0, 0, 0, 0.125);
+}
 
+.card:hover {
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    transition: box-shadow 0.15s ease-in-out;
+}
+
+.badge {
+    font-size: 0.75em;
+}
+
+.btn-sm {
+    font-size: 0.8em;
+}
+</style>
+
+<script>
+// Alert'leri otomatik kapat
+document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(function() {
+        const alerts = document.querySelectorAll('.alert');
+        alerts.forEach(function(alert) {
+            if (alert.classList.contains('alert-dismissible')) {
+                const closeBtn = alert.querySelector('.btn-close');
+                if (closeBtn) {
+                    closeBtn.click();
+                }
+            }
+        });
+    }, 5000);
+});
+</script>

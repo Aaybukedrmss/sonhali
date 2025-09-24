@@ -24,7 +24,7 @@
         
         @* Badge'ler gizlendi *@
         
-        <!-- Favori Butonu (AJAX) - Herkese göster, JavaScript giriş kontrolü yapacak -->
+        <!-- Favori Butonu -->
         <div class="position-absolute top-0 end-0 p-2">
             @{ 
                 var isFav = false; 
@@ -37,15 +37,8 @@
                     }
                 }
             }
-            <button type="button" class="btn btn-sm rounded-circle shadow-sm btn-fav-toggle @(isFav ? "favorite-active" : "")" data-urun-id="@Model.Id" title="Favorilere ekle/çıkar">
-                @if (isFav)
-                {
-                    <i class="fas fa-heart"></i>
-                }
-                else
-                {
-                    <i class="far fa-heart"></i>
-                }
+            <button type="button" class="btn btn-sm rounded-circle shadow-sm product-card-fav-toggle @(isFav ? "favorite-active" : "")" data-urun-id="@Model.Id" title="Favorilere ekle/çıkar">
+                <i class="fa-solid fa-heart"></i>
             </button>
         </div>
     </div>
@@ -167,14 +160,19 @@
         font-size: 0.75rem;
     }
     
-    .btn-fav-toggle {
+    .product-card-fav-toggle {
         background-color: rgba(255, 255, 255, 0.9) !important;
         border: 1px solid #ddd !important;
-        color: #666 !important;
+        color: #f6a7a1 !important;
         transition: all 0.3s ease !important;
+        width: 35px;
+        height: 35px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
     
-    .btn-fav-toggle:hover {
+    .product-card-fav-toggle:hover {
         background-color: #f6a7a1 !important;
         border-color: #f6a7a1 !important;
         color: white !important;

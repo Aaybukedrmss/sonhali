@@ -28,6 +28,7 @@ public class AdminProductsController : Controller
     }
 
     [HttpGet("create")]
+    [Authorize(Roles = "Admin,Editor")] // Admin ve Editor rolleri ürün oluşturabilir
     public IActionResult Create()
     {
         return View("~/Views/Admin/Products/Create.cshtml", new AdminProductFormModel());
@@ -35,6 +36,7 @@ public class AdminProductsController : Controller
 
     [HttpPost("create")]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = "Admin,Editor")] // Admin ve Editor rolleri ürün oluşturabilir
     public async Task<IActionResult> Create(AdminProductFormModel model)
     {
         if (!ModelState.IsValid)
@@ -77,6 +79,7 @@ public class AdminProductsController : Controller
     }
 
     [HttpGet("edit/{id:int}")]
+    [Authorize(Roles = "Admin,Editor")] // Admin ve Editor rolleri ürün düzenleyebilir
     public async Task<IActionResult> Edit(int id)
     {
         var p = await _db.Urunler.FindAsync(id);
@@ -107,6 +110,7 @@ public class AdminProductsController : Controller
 
     [HttpPost("edit/{id:int}")]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = "Admin,Editor")] // Admin ve Editor rolleri ürün düzenleyebilir
     public async Task<IActionResult> Edit(int id, AdminProductFormModel model)
     {
         var p = await _db.Urunler.FindAsync(id);
@@ -149,6 +153,7 @@ public class AdminProductsController : Controller
 
     [HttpPost("delete/{id:int}")]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = "Admin")] // Sadece Admin rolü ürün silebilir
     public async Task<IActionResult> Delete(int id)
     {
         var p = await _db.Urunler.FindAsync(id);

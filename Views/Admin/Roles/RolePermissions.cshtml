@@ -1,0 +1,166 @@
+@model dotnet_store.Models.Admin.RolePermissionViewModel
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Rol İzinleri";
+}
+
+<section class="container my-4">
+    <div class="row">
+        <div class="col-md-8">
+            <h2><i class="fas fa-user-shield me-2"></i>@Model.RoleName Rolü İzinleri</h2>
+            <p class="text-muted">Bu role ait izinleri yönetebilirsiniz</p>
+        </div>
+        <div class="col-md-4 text-end">
+            <a href="/admin/roles" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left me-1"></i>Rol Yönetimine Dön
+            </a>
+        </div>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle me-1"></i>@TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-circle me-1"></i>@TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <form asp-action="UpdateRolePermissions" asp-controller="AdminRoles" asp-route-roleId="@Model.RoleId" method="post">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-check-square me-2"></i>İzin Seçimi</h5>
+            </div>
+            <div class="card-body">
+                @if (Model.AvailablePermissions.Any())
+                {
+                    <div class="row">
+                        @foreach (var permission in Model.AvailablePermissions.GroupBy(p => p.Category))
+                        {
+                            <div class="col-md-6 mb-4">
+                                <h6 class="text-primary"><i class="fas fa-folder me-1"></i>@permission.Key</h6>
+                                <div class="list-group">
+                                    @foreach (var perm in permission)
+                                    {
+                                        <div class="list-group-item">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" 
+                                                       name="permissionIds" 
+                                                       value="@perm.Id" 
+                                                       id="permission_@perm.Id"
+                                                       @(Model.RolePermissions.Contains(perm.Id) ? "checked" : "")>
+                                                <label class="form-check-label" for="permission_@perm.Id">
+                                                    <strong>@perm.Name</strong>
+                                                    <br>
+                                                    <small class="text-muted">@perm.Description</small>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="alert alert-info text-center">
+                        <i class="fas fa-info-circle me-1"></i>Henüz izin tanımlanmamış.
+                        <br>
+                        <a href="/admin/roles/permissions" class="btn btn-primary btn-sm mt-2">
+                            <i class="fas fa-plus me-1"></i>İzin Ekle
+                        </a>
+                    </div>
+                }
+            </div>
+            <div class="card-footer">
+                <button type="submit" class="btn btn-success">
+                    <i class="fas fa-save me-1"></i>İzinleri Kaydet
+                </button>
+                <a href="/admin/roles" class="btn btn-secondary">
+                    <i class="fas fa-times me-1"></i>İptal
+                </a>
+            </div>
+        </div>
+        @Html.AntiForgeryToken()
+    </form>
+
+    <!-- Mevcut İzinler Özeti -->
+    <div class="card mt-3">
+        <div class="card-header">
+            <h5 class="mb-0"><i class="fas fa-list me-2"></i>Seçili İzinler</h5>
+        </div>
+        <div class="card-body">
+            @if (Model.RolePermissions.Any())
+            {
+                <div class="row">
+                    @foreach (var permissionId in Model.RolePermissions)
+                    {
+                        var permission = Model.AvailablePermissions.FirstOrDefault(p => p.Id == permissionId);
+                        if (permission != null)
+                        {
+                            <div class="col-md-4 mb-2">
+                                <span class="badge bg-success">
+                                    <i class="fas fa-check me-1"></i>@permission.Name
+                                </span>
+                            </div>
+                        }
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-warning text-center">
+                    <i class="fas fa-exclamation-triangle me-1"></i>Bu role henüz izin atanmamış.
+                </div>
+            }
+        </div>
+    </div>
+</section>
+
+<script>
+// Auto-close alerts
+setTimeout(function() {
+    var alerts = document.querySelectorAll('.alert');
+    alerts.forEach(function(alert) {
+        var bsAlert = new bootstrap.Alert(alert);
+        bsAlert.close();
+    });
+}, 5000);
+
+// Select All functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const selectAllBtn = document.createElement('button');
+    selectAllBtn.type = 'button';
+    selectAllBtn.className = 'btn btn-outline-primary btn-sm';
+    selectAllBtn.innerHTML = '<i class="fas fa-check-double me-1"></i>Tümünü Seç';
+    
+    const deselectAllBtn = document.createElement('button');
+    deselectAllBtn.type = 'button';
+    deselectAllBtn.className = 'btn btn-outline-secondary btn-sm ms-2';
+    deselectAllBtn.innerHTML = '<i class="fas fa-times me-1"></i>Tümünü Kaldır';
+    
+    const cardHeader = document.querySelector('.card-header h5');
+    cardHeader.parentNode.appendChild(selectAllBtn);
+    cardHeader.parentNode.appendChild(deselectAllBtn);
+    
+    selectAllBtn.addEventListener('click', function() {
+        document.querySelectorAll('input[name="permissionIds"]').forEach(checkbox => {
+            checkbox.checked = true;
+        });
+    });
+    
+    deselectAllBtn.addEventListener('click', function() {
+        document.querySelectorAll('input[name="permissionIds"]').forEach(checkbox => {
+            checkbox.checked = false;
+        });
+    });
+});
+</script>

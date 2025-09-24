@@ -66,18 +66,43 @@
                                     {
                                         var au = await UserManager.GetUserAsync(User);
                                         var isAdmin = au != null && await UserManager.IsInRoleAsync(au, "Admin");
-                                        if (isAdmin)
+                                        var isSupport = au != null && await UserManager.IsInRoleAsync(au, "Support");
+                                        var isManager = au != null && await UserManager.IsInRoleAsync(au, "Manager");
+                                        
+                                        if (isAdmin || isSupport || isManager)
                                         {
                                             <li><hr class="dropdown-divider" /></li>
-                                            <li class="dropdown-header">Yönetim</li>
-                                            <li><a class="dropdown-item" href="/admin">Yönetim Ana Sayfa</a></li>
-                                            <li><a class="dropdown-item" href="/admin/orders">Siparişler</a></li>
-                                            <li><a class="dropdown-item" href="/admin/sliders">Slider Yönetimi</a></li>
-                                            <li><a class="dropdown-item" href="/admin/categories">Kategoriler</a></li>
-                                            <li><a class="dropdown-item" href="/admin/products">Ürünler</a></li>
-                                            <li><a class="dropdown-item" href="/admin/roles">Rol Yönetimi</a></li>
-                                            <li><a class="dropdown-item" href="/admin/settings">Site Ayarları</a></li>
-                                            <li><a class="dropdown-item" href="/admin/support">Destek Talepleri</a></li>
+                                            
+                                            @if (isSupport && !isAdmin)
+                                            {
+                                                <li class="dropdown-header">Destek Paneli</li>
+                                                <li><a class="dropdown-item" href="/admin">Destek Ana Sayfa</a></li>
+                                                <li><a class="dropdown-item" href="/admin/support">Destek Talepleri</a></li>
+                                            }
+                                            else
+                                            {
+                                                <li class="dropdown-header">Yönetim</li>
+                                                <li><a class="dropdown-item" href="/admin">Yönetim Ana Sayfa</a></li>
+                                                
+                                                @if (isAdmin || isManager)
+                                                {
+                                                    <li><a class="dropdown-item" href="/admin/orders">Siparişler</a></li>
+                                                }
+                                                
+                                                @if (isAdmin)
+                                                {
+                                                    <li><a class="dropdown-item" href="/admin/sliders">Slider Yönetimi</a></li>
+                                                    <li><a class="dropdown-item" href="/admin/categories">Kategoriler</a></li>
+                                                    <li><a class="dropdown-item" href="/admin/products">Ürünler</a></li>
+                                                    <li><a class="dropdown-item" href="/admin/roles">Rol Yönetimi</a></li>
+                                                    <li><a class="dropdown-item" href="/admin/settings">Site Ayarları</a></li>
+                                                }
+                                                
+                                                @if (isAdmin || isSupport)
+                                                {
+                                                    <li><a class="dropdown-item" href="/admin/support">Destek Talepleri</a></li>
+                                                }
+                                            }
                                         }
                                     }
                                     @if (SignInManager.IsSignedIn(User))

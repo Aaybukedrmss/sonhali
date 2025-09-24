@@ -257,3 +257,34 @@
 .btn-fav-toggle.favorite-active i {
     color: #dc3545 !important;
 }
+
+/* Ürün kartları favorileme butonları */
+.product-card-fav-toggle {
+    background: rgba(255, 255, 255, 0.9) !important;
+    border: none !important;
+    color: #f6a7a1 !important;
+    transition: all 0.3s ease;
+    width: 35px;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.product-card-fav-toggle:hover {
+    background: rgba(255, 255, 255, 1) !important;
+    color: #e74c3c !important;
+    transform: scale(1.1);
+}
+
+.product-card-fav-toggle.favorite-active {
+    color: #dc3545 !important;
+}
+
+.product-card-fav-toggle.favorite-active:hover {
+    color: #c82333 !important;
+}
+
+.product-card-fav-toggle i {
+    font-size: 14px;
+}

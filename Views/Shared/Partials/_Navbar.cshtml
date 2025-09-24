@@ -44,7 +44,16 @@
                         {
                             var item = menuItems[i];
                             <li class="nav-item">
-                                <a href="@item.Url" class="nav-link @(i == 0 ? "ps-0" : null)">@item.Text</a>
+                                @{
+                                    var url = item.Url;
+                                    // Eğer URL boş veya # ise, text'ten slug üretip kategori sayfasına yönlendir
+                                    if (string.IsNullOrWhiteSpace(url) || url == "#")
+                                    {
+                                        var slug = (item.Text ?? "").Trim().ToLowerInvariant().Replace(" ", "-");
+                                        url = Url.Action("Category", "Urun", new { slug });
+                                    }
+                                }
+                                <a href="@url" class="nav-link @(i == 0 ? "ps-0" : null)">@item.Text</a>
                             </li>
                         }
                     </ul>

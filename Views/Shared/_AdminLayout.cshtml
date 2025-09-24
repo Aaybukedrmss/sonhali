@@ -22,18 +22,24 @@
                         <li class="nav-item">
                             <a class="nav-link text-light" asp-area="" asp-controller="Home" asp-action="Index">Ana Sayfa</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-light" asp-area="" asp-controller="User" asp-action="Index">Kullanıcılar</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-light" asp-area="" asp-controller="Urun" asp-action="Index">Ürünler</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-light" asp-area="" asp-controller="Slider" asp-action="Index">Slider</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-light" href="/admin/support">Destek Talepleri</a>
-                        </li>
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-light" asp-area="" asp-controller="User" asp-action="Index">Kullanıcılar</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-light" asp-area="" asp-controller="Urun" asp-action="Index">Ürünler</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-light" asp-area="" asp-controller="Slider" asp-action="Index">Slider</a>
+                            </li>
+                        }
+                        @if (User.IsInRole("Admin") || User.IsInRole("Support"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-light" href="/admin/support">Destek Talepleri</a>
+                            </li>
+                        }
                     </ul>
                 </div>
             </div>

@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace dotnet_store.Controllers.Admin;
 
-[Authorize(Roles = "Admin")]
+[Authorize(Roles = "Admin,Support")] // Admin ve Support rolleri destek panelini görebilir
 [Route("admin/support")] 
 public class AdminSupportRequestsController : Controller
 {

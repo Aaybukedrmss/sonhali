@@ -15,6 +15,45 @@ public class UrunController : Controller
         _logger = logger;
     }
 
+    [HttpGet]
+    public async Task<ActionResult> Category(string slug)
+    {
+        try
+        {
+            if (string.IsNullOrWhiteSpace(slug))
+            {
+                return RedirectToAction(nameof(List));
+            }
+
+            var query = _context.Urunler.AsQueryable();
+
+            // Kategori slug eşleşmesi veya kategori adı içerenler
+            query = query.Where(u =>
+                u.CategorySlug == slug ||
+                (!string.IsNullOrEmpty(u.TopMostCategoryNames) && u.TopMostCategoryNames.Contains(slug))
+            );
+
+            var urunler = await query.ToListAsync();
+
+            // Filtre seçenekleri
+            ViewBag.Kategoriler = await _context.Urunler.Select(u => u.TopMostCategoryNames).Distinct().ToListAsync();
+            ViewBag.Yayinevleri = await _context.Urunler.Select(u => u.Yayinevi).Distinct().ToListAsync();
+            ViewBag.Yazarlar = await _context.Urunler.Select(u => u.Yazar).Distinct().ToListAsync();
+            ViewBag.Markalar = await _context.Urunler.Select(u => u.Marka).Distinct().ToListAsync();
+
+            ViewBag.SelectedCategory = slug;
+
+            // Mevcut filtreleme sayfasını önceden filtrelenmiş halde kullan
+            return View("List", urunler);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Kategori listesi alınırken hata oluştu: {Slug}", slug);
+            TempData["ErrorMessage"] = "Ürünler yüklenirken bir hata oluştu. Lütfen daha sonra tekrar deneyin.";
+            return View("List", new List<Urun>());
+        }
+    }
+
     public async Task<ActionResult> Index()
     {
         try

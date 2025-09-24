@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace dotnet_store.Controllers.Admin;
 
-[Authorize(Roles = "Admin")]
+[Authorize(Roles = "Admin,Manager")] // Admin ve Manager rolleri sipariş yönetebilir
 [Route("admin/orders")] 
 public class AdminOrdersController : Controller
 {

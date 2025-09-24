@@ -27,4 +27,142 @@
     }
 </div>
 
+<script>
+// Favorilerim sayfası için favorileme sistemi
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Favorilerim sayfası favorileme sistemi başlatılıyor');
+    
+    // Favorilerim sayfası favorileme butonlarını bul
+    const favoritesPageButtons = document.querySelectorAll('.product-card-fav-toggle');
+    console.log(`${favoritesPageButtons.length} favorilerim sayfası favorileme butonu bulundu`);
+    
+    if (favoritesPageButtons.length === 0) {
+        console.log('Hiç favorilerim sayfası favorileme butonu bulunamadı');
+        return;
+    }
+    
+    favoritesPageButtons.forEach((button, index) => {
+        console.log(`Favorilerim sayfası buton ${index + 1}:`, button);
+        
+        // Event listener ekle
+        button.addEventListener('click', function(event) {
+            console.log('Favorilerim sayfası favorileme butonu tıklandı!');
+            
+            event.preventDefault();
+            event.stopPropagation();
+            
+            const urunId = button.getAttribute('data-urun-id');
+            console.log('Favorilerim sayfası UrunId:', urunId);
+            
+            if (!urunId) {
+                console.error('Favorilerim sayfası UrunId bulunamadı!');
+                return;
+            }
+            
+            // Butonu devre dışı bırak
+            button.disabled = true;
+            const originalHTML = button.innerHTML;
+            button.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+            
+            // Token'ı bul
+            const tokenInput = document.querySelector('input[name="__RequestVerificationToken"]');
+            if (!tokenInput) {
+                console.error('Anti-forgery token bulunamadı!');
+                button.disabled = false;
+                button.innerHTML = originalHTML;
+                return;
+            }
+            
+            const token = tokenInput.value;
+            
+            // AJAX isteği - timeout ile
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 saniye timeout
+            
+            fetch('/Favorite/ToggleAjax', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: `urunId=${encodeURIComponent(urunId)}&__RequestVerificationToken=${encodeURIComponent(token)}`,
+                signal: controller.signal
+            })
+            .then(response => {
+                clearTimeout(timeoutId); // Timeout'u temizle
+                if (!response.ok) {
+                    if (response.status === 401) {
+                        showNotification('Favorilere eklemek için giriş yapmalısınız!', 'error');
+                        setTimeout(() => {
+                            window.location.href = '/Account/Login';
+                        }, 2000);
+                        return;
+                    }
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Favorilerim sayfası sunucu yanıtı:', data);
+                
+                if (!data.success) {
+                    throw new Error(data.error || 'Bilinmeyen hata');
+                }
+                
+                // Butonu güncelle
+                if (data.isFavorite) {
+                    button.classList.add('favorite-active');
+                    showNotification('❤️ Ürün favorilere eklendi!', 'success');
+                } else {
+                    button.classList.remove('favorite-active');
+                    showNotification('💔 Ürün favorilerden çıkarıldı!', 'info');
+                    
+                    // Favorilerim sayfasından çıkarıldığında ürün kartını gizle
+                    setTimeout(() => {
+                        const productCard = button.closest('.col-12');
+                        if (productCard) {
+                            productCard.style.transition = 'opacity 0.3s ease';
+                            productCard.style.opacity = '0';
+                            setTimeout(() => {
+                                productCard.remove();
+                                
+                                // Eğer hiç ürün kalmadıysa mesaj göster
+                                const remainingCards = document.querySelectorAll('.col-12.col-sm-6.col-md-4.col-lg-3');
+                                if (remainingCards.length === 0) {
+                                    const container = document.querySelector('.row.g-3');
+                                    if (container) {
+                                        container.innerHTML = '<div class="col-12"><div class="alert alert-info text-center">Henüz favori ürününüz bulunmuyor.</div></div>';
+                                    }
+                                }
+                            }, 300);
+                        }
+                    }, 1000);
+                }
+                
+                // Butonu tekrar aktif et
+                button.disabled = false;
+            })
+            .catch(error => {
+                clearTimeout(timeoutId); // Timeout'u temizle
+                console.error('Favorilerim sayfası favori işlemi hatası:', error);
+                
+                if (error.name === 'AbortError') {
+                    showNotification('⏱️ İşlem zaman aşımına uğradı!', 'error');
+                } else {
+                    showNotification('❌ Hata oluştu!', 'error');
+                }
+                
+                // Butonu tekrar aktif et
+                button.disabled = false;
+                button.innerHTML = originalHTML;
+            });
+        });
+        
+        console.log(`Favorilerim sayfası buton ${index + 1} için event listener eklendi`);
+    });
+    
+    console.log('Tüm favorilerim sayfası favorileme butonlarına event listener eklendi');
+});
+</script>
+
 

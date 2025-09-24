@@ -39,33 +39,49 @@ public class FavoriteController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> ToggleAjax(int urunId)
     {
-        var user = await _userManager.GetUserAsync(User);
-        if (user == null)
+        try
         {
-            return Unauthorized();
-        }
-
-        var existing = await _dbContext.Favorites
-            .FirstOrDefaultAsync(f => f.UserId == user.Id && f.UrunId == urunId);
-
-        bool isFavorite;
-        if (existing != null)
-        {
-            _dbContext.Favorites.Remove(existing);
-            isFavorite = false;
-        }
-        else
-        {
-            _dbContext.Favorites.Add(new Favorite
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
             {
-                UserId = user.Id,
-                UrunId = urunId
-            });
-            isFavorite = true;
-        }
+                return Json(new { success = false, error = "Kullanıcı bulunamadı" });
+            }
 
-        await _dbContext.SaveChangesAsync();
-        return Json(new { success = true, isFavorite });
+            // Ürünün var olup olmadığını kontrol et
+            var urun = await _dbContext.Urunler.FirstOrDefaultAsync(u => u.Id == urunId);
+            if (urun == null)
+            {
+                return Json(new { success = false, error = "Ürün bulunamadı" });
+            }
+
+            var existing = await _dbContext.Favorites
+                .FirstOrDefaultAsync(f => f.UserId == user.Id && f.UrunId == urunId);
+
+            bool isFavorite;
+            if (existing != null)
+            {
+                _dbContext.Favorites.Remove(existing);
+                isFavorite = false;
+            }
+            else
+            {
+                _dbContext.Favorites.Add(new Favorite
+                {
+                    UserId = user.Id,
+                    UrunId = urunId
+                });
+                isFavorite = true;
+            }
+
+            await _dbContext.SaveChangesAsync();
+            return Json(new { success = true, isFavorite });
+        }
+        catch (Exception ex)
+        {
+            // Log the error (you can add proper logging here)
+            Console.WriteLine($"Favorite toggle error: {ex.Message}");
+            return Json(new { success = false, error = "İşlem sırasında hata oluştu" });
+        }
     }
 }
 

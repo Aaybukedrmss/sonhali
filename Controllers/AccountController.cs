@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
 using dotnet_store.Models;
+using Microsoft.AspNetCore.Authentication;
 
 namespace dotnet_store.Controllers;
 
@@ -75,7 +76,13 @@ public class AccountController : Controller
     [HttpGet]
     public ActionResult Login()
     {
-        return View(new AccountLoginModel());
+        var model = new AccountLoginModel();
+        if (Request.Cookies.TryGetValue("remember_username", out var savedUser) && !string.IsNullOrWhiteSpace(savedUser))
+        {
+            model.UsernameOrEmail = savedUser;
+            model.RememberMe = true;
+        }
+        return View(model);
     }
 
     [HttpPost]
@@ -132,6 +139,36 @@ public class AccountController : Controller
 
             if(signInResult.Succeeded)
             {
+                // RememberMe kalıcılığı için çerezi açıkça kalıcı yap
+                if (model.RememberMe)
+                {
+                    var authProps = new AuthenticationProperties
+                    {
+                        IsPersistent = true,
+                        ExpiresUtc = DateTimeOffset.UtcNow.AddDays(30),
+                        AllowRefresh = true
+                    };
+                    var principal = await _signInManager.CreateUserPrincipalAsync(user);
+                    await HttpContext.SignInAsync(IdentityConstants.ApplicationScheme, principal, authProps);
+
+                    // Kullanıcı adını hatırlatmak için ayrı bir çerez (şifre asla saklanmaz)
+                    Response.Cookies.Append(
+                        key: "remember_username",
+                        value: model.UsernameOrEmail,
+                        options: new CookieOptions
+                        {
+                            Expires = DateTimeOffset.UtcNow.AddDays(180),
+                            SameSite = SameSiteMode.Lax,
+                            HttpOnly = true,
+                            IsEssential = true
+                        }
+                    );
+                }
+                else
+                {
+                    // Kullanıcı istemezse hatırlama çerezini temizle
+                    Response.Cookies.Delete("remember_username");
+                }
                 return RedirectToAction("Index", "Home");
             }
 
